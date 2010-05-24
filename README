@@ -1,0 +1,17 @@
+# KondoLisp
+
+KondoLisp is a framework for dynamic prototyping on Arduino. It
+enables you to run programs on Arduino WITHOUT frastrating compiling
+and uploading processes.
+
+## Usage
+
+FIXME: write
+
+## Installation
+
+FIXME: write
+
+## License
+
+MIT License. See /LICENSE.txt
