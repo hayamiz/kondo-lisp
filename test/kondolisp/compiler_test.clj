@@ -1,5 +1,5 @@
-(ns kondolisp.core-test
-  (:use [kondolisp.core] :reload-all)
+(ns kondolisp.compiler-test
+  (:use [kondolisp.compiler] :reload-all)
   (:use [clojure.test]))
 
 (deftest replace-me ;; FIXME: write
