@@ -2,7 +2,7 @@
 
 (ns kondolisp.compiler
   (:use [clojure core]
-        [clojure.contrib str-utils pprint]
+        [clojure.contrib str-utils pprint seq-utils]
 	[clj-match])
   (:require [clojure.walk]
 	    [clojure.contrib str-utils2])
@@ -316,4 +316,21 @@
    (throw (Exception. (str "Compile error: " exp)))
    ))
 
+(defn compile-compact [program]
+  program)
 
+(defn compile-resolve-labels [program]
+  (let [[_ labels]
+        (reduce (fn [[idx labels] inst]
+                  (if (symbol? inst)
+                    [idx (assoc labels inst idx)]
+                    [(+ 1 idx) labels]))
+                [0 {}] program)]
+    (map (fn [inst]
+           (if (empty? (rest inst))
+             inst
+             (let [[inst-name inst-operand] inst]
+               (if (symbol? inst-operand)
+                 `(~inst-name ~(inst-operand labels))
+                 inst))))
+         (filter #(not (symbol? %)) program))))
