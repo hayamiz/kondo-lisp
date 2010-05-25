@@ -11,40 +11,40 @@
 (def *inst-width* 4)
 
 (def *vm-inst-list*
-     '[(VM_DUMMY nil)
+     '[(:VM_DUMMY nil)
 
        ;; basic stack and register operation
-       (VM_IVAL lispval)
-       (VM_IVAL_PUSH lispval)
-       (VM_VREF_PUSH lispval-symbol)
-       (VM_PUSH nil)
-       (VM_POP nil)
+       (:VM_IVAL lispval)
+       (:VM_IVAL_PUSH lispval)
+       (:VM_VREF_PUSH lispval-symbol)
+       (:VM_PUSH nil)
+       (:VM_POP nil)
 
        ;; control flow
-       (VM_JMP integer)
-       (VM_BIF integer)
-       (VM_BIFN integer)
-       (VM_PUSH_FRAME nil)
-       (VM_FUNCALL lispval)
+       (:VM_JMP integer)
+       (:VM_BIF integer)
+       (:VM_BIFN integer)
+       (:VM_PUSH_FRAME nil)
+       (:VM_FUNCALL lispval)
 
        ;; lisp namespace operation
-       (VM_BIND lispval-symbol)	;; bind stack-top value to symbol(operand)
-       (VM_UNBIND integer) ;; unbind symbol(operand)
-       (VM_VREF lispval-symbol)	  ;; refer value of symbol(operand)
-       (VM_VSET lispval-symbol)	  ;; overwrite symbol(operand) by %val
+       (:VM_BIND lispval-symbol)	;; bind stack-top value to symbol(operand)
+       (:VM_UNBIND integer) ;; unbind symbol(operand)
+       (:VM_VREF lispval-symbol)	  ;; refer value of symbol(operand)
+       (:VM_VSET lispval-symbol)	  ;; overwrite symbol(operand) by %val
 
        ;; basic arithmetic operation
-       (VM_LT nil)
-       (VM_GT nil)
-       (VM_LE nil)
-       (VM_GE nil)
-       (VM_EQ nil)
-       (VM_PLUS nil)
-       (VM_MINUS nil)
+       (:VM_LT nil)
+       (:VM_GT nil)
+       (:VM_LE nil)
+       (:VM_GE nil)
+       (:VM_EQ nil)
+       (:VM_PLUS nil)
+       (:VM_MINUS nil)
 
        ;; lisp data operation
-       (VM_CONS nil)	      ;; (cons <stack-top> <%val>)
-       (VM_IVAL_CONS lispval) ;; (cons <stack-top> <immval>)
+       (:VM_CONS nil)	      ;; (cons <stack-top> <%val>)
+       (:VM_IVAL_CONS lispval) ;; (cons <stack-top> <immval>)
        ])
 
 (def *vm-builtin-funs*
@@ -86,15 +86,9 @@
 	(recur (+ idx 1) pred (rest coll)))))
   (inner-index 0 pred coll))
 
-(defn unqualify-symbol [sym]
-  (let [sym-ns (namespace sym)]
-    (if sym-ns
-      (symbol (subs (str sym) (+ 1 (count sym-ns))))
-      sym)))
-
 (defn #^{:doc "Encode a VM instruction to bytes"}
   encode-inst [inst]
-  (let [inst-name (unqualify-symbol (first inst)),
+  (let [inst-name (first inst),
 	inst-operand (or (second inst) 0),
 	inst-spec (some (fn [inst-spec] (= inst-name (first inst-spec)))
 			*vm-inst-list*)]
@@ -190,7 +184,7 @@
 (defn pp-program [insts]
   (dotimes [i (count insts)]
     (let [inst (nth insts i),
-	  inst-name (unqualify-symbol (first inst))
+	  inst-name (first inst)
 	  inst-spec (some (fn [spec] (and (= inst-name (first spec)) spec))
 			  *vm-inst-list*)
 	  inst-operand (second inst)
@@ -211,38 +205,38 @@
    (or (and (coll? exp)
 	    (empty? exp))
        (= 'nil exp))
-   `((VM_IVAL ~(make-nil)))
+   `((:VM_IVAL ~(make-nil)))
    ;;
-   (or (= 't exp) (= 'T exp))		`((VM_IVAL ~(make-t)))
-   (symbol? exp)			`((VM_IVAL ~(make-sym exp)))
-   (number? exp)			`((VM_IVAL ~(make-num exp)))
+   (or (= 't exp) (= 'T exp))		`((:VM_IVAL ~(make-t)))
+   (symbol? exp)			`((:VM_IVAL ~(make-sym exp)))
+   (number? exp)			`((:VM_IVAL ~(make-num exp)))
    (coll? exp)				`(~@(compile-quote (first exp))
-					  (VM_PUSH)
+					  (:VM_PUSH)
 					  ~@(compile-quote (rest exp))
-					  (VM_CONS))
+					  (:VM_CONS))
    ))
 
 (defn compile-let [bindings body]
   `(~@(apply concat
        (map (fn [binding]
 	      `(~@(compile-pass1 (second binding))
-		(VM_BIND ~(make-sym (first binding)))))
+		(:VM_BIND ~(make-sym (first binding)))))
 	    bindings))
     ~@(apply concat
 	     (map compile-pass1 body))
-    (VM_UNBIND ~(count bindings))))
+    (:VM_UNBIND ~(count bindings))))
 
 (defn builtin-fun-id [fname]
   (index (fn [pair] (= (first pair) fname))
 	 *vm-builtin-funs*))
 
 (defn compile-funcall [fname args]
-  `((VM_PUSH_FRAME)
+  `((:VM_PUSH_FRAME)
     ~@(apply concat
        (map (fn [arg] (concat (compile-pass1 arg)
-			      `((VM_PUSH))))
+			      `((:VM_PUSH))))
 	    (reverse args)))
-    (VM_FUNCALL ~(if (some (fn [fun-spec] (= (first fun-spec) fname))
+    (:VM_FUNCALL ~(if (some (fn [fun-spec] (= (first fun-spec) fname))
 			   *vm-builtin-funs*)
 		   (make-num (builtin-fun-id fname))
 		   (make-sym fname)))))
@@ -251,37 +245,37 @@
   (cond
    (or (nil? exp)
        (and (coll? exp) (empty? exp)))
-   `((VM_IVAL ~(make-nil)))
+   `((:VM_IVAL ~(make-nil)))
    ;;
    (or (= 't exp) (= 't exp))
-   `((VM_IVAL ~(make-t)))
+   `((:VM_IVAL ~(make-t)))
    ;;
    (symbol? exp)
-   `((VM_VREF ~(make-sym exp)))
+   `((:VM_VREF ~(make-sym exp)))
    ;;
    (number? exp)
-   `((VM_IVAL ~(make-num exp)))
+   `((:VM_IVAL ~(make-num exp)))
    ;;
    (coll? exp)
    (match exp
 	  ('quote x)	(compile-quote x)
 	  ;;
 	  ('progn & body)	(if (empty? body)
-			    `((VM_IVAL ~(make-nil)))
+			    `((:VM_IVAL ~(make-nil)))
 			    (apply concat (map compile-pass1 body)))
 	  ;;
 	  ('let bindings & body)	(compile-let bindings body)
 	  ;;
 	  ('setq sym val)	`(~@(compile-pass1 val)
-				  (VM_VSET ~(make-sym sym)))
+				  (:VM_VSET ~(make-sym sym)))
 	  ;;
 	  ('if pred then-body else-body)
 	  (let [end-label (gensym),
 		else-label (gensym)]
 	    `(~@(compile-pass1 pred)
-	       (VM_BIFN ~else-label)
+	       (:VM_BIFN ~else-label)
 	       ~@(compile-pass1 then-body)
-	       (VM_JMP ~end-label)
+	       (:VM_JMP ~end-label)
 	       ~else-label
 	       ~@(compile-pass1 else-body)
 	       ~end-label))
@@ -290,31 +284,31 @@
 				      end-label (gensym)]
 				  `(~retry-label
 				    ~@(compile-pass1 pred)
-				    (VM_BIFN ~end-label)
+				    (:VM_BIFN ~end-label)
 				    ~@(apply concat (map compile-pass1 body))
-				    (VM_JMP ~retry-label)
+				    (:VM_JMP ~retry-label)
 				    ~end-label))
 	  ;;
 	  ('dotimes (var num) & body)
 	  (let [end-label (gensym),
 		retry-label (gensym)]
-	    `((VM_IVAL ~(make-num 0))
-	      (VM_BIND ~(make-sym var))
+	    `((:VM_IVAL ~(make-num 0))
+	      (:VM_BIND ~(make-sym var))
 	      ~retry-label
 	      ~@(apply concat (map compile-pass1 body))
-	      (VM_VREF ~(make-sym var))
-	      (VM_PUSH)
-	      (VM_IVAL ~(make-num 1))
-	      (VM_PLUS)
-	      (VM_VSET ~(make-sym var))
-	      (VM_VREF ~(make-sym var))
-	      (VM_PUSH)
-	      (VM_IVAL ~(make-num num))
-	      (VM_LE)
-	      (VM_BIF ~end-label)
-	      (VM_JMP ~retry-label)
+	      (:VM_VREF ~(make-sym var))
+	      (:VM_PUSH)
+	      (:VM_IVAL ~(make-num 1))
+	      (:VM_PLUS)
+	      (:VM_VSET ~(make-sym var))
+	      (:VM_VREF ~(make-sym var))
+	      (:VM_PUSH)
+	      (:VM_IVAL ~(make-num num))
+	      (:VM_LE)
+	      (:VM_BIF ~end-label)
+	      (:VM_JMP ~retry-label)
 	      ~end-label
-	      (VM_UNBIND 1)))
+	      (:VM_UNBIND 1)))
 	  ;;
 	  _	(compile-funcall (first exp) (rest exp)))
    ;;
