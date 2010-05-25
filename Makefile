@@ -1,5 +1,5 @@
 
-TARGET = kondo-lisp.jar
+TARGET = kondolisp.jar
 
 .PHONY: all clean check
 

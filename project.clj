@@ -1,7 +1,7 @@
 ;; -*- indent-tabs-mode: nil; mode: clojure  -*-
 
-(defproject kondo-lisp "0.0.1-SNAPSHOT"
-  :main kondo-lisp.main
+(defproject kondolisp "0.0.1-SNAPSHOT"
+  :main kondolisp.main
   :description "A framework for dynamic prototyping on Arduino"
   :dependencies [[org.clojure/clojure "1.1.0"]
                  [org.clojure/clojure-contrib "1.1.0"]

@@ -1,6 +1,6 @@
 ;; -*- indent-tabs-mode: nil; mode: clojure  -*-
 
-(ns kondo-lisp.compiler
+(ns kondolisp.compiler
   (:use [clojure core]
         [clojure.contrib str-utils pprint]
 	[clj-match])

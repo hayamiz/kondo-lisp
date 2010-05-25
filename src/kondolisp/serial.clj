@@ -1,6 +1,6 @@
 ;; -*- indent-tabs-mode: nil; mode: clojure  -*-
 
-(ns kondo-lisp.serial
+(ns kondolisp.serial
   (:use [clojure core]
         [clojure.contrib str-utils java-utils pprint])
   (:import (gnu.io CommPort
@@ -14,7 +14,7 @@
 (def *serial* (ref nil))
 (def *serial-config* (ref {:port-name "/dev/ttyUSB0",
                            :baud-rate 9600,
-                           :app-name "kondo-lisp"}))
+                           :app-name "kondolisp"}))
 
 (defn set-serial-config [config]
   (dosync
