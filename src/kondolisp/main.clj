@@ -3,8 +3,9 @@
   (:use [clojure core]
 	[clojure.contrib pprint]))
 
-(defn -main [& argv]
-  (pprint argv))
+(defn -main [& args]
+  (.println System/out "hoge")
+  )
 
 
 
