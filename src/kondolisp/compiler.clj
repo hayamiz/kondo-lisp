@@ -86,6 +86,12 @@
 	(recur (+ idx 1) pred (rest coll)))))
   (inner-index 0 pred coll))
 
+(defn unqualify-symbol [sym]
+  (let [sym-ns (namespace sym)]
+    (if sym-ns
+      (symbol (subs (str sym) (+ 1 (count sym-ns))))
+      sym)))
+
 (defn #^{:doc "Encode a VM instruction to bytes"}
   encode-inst [inst]
   (let [inst-name (unqualify-symbol (first inst)),
@@ -180,12 +186,6 @@
    (= val (make-t)) "T"
    (= (bit-and 0x8001 val) 0x8001) (format "%d" (decode-num val))
    (= (bit-and 0xc001 val) 0x4001) (format "'%s" (decode-sym val))))
-
-(defn unqualify-symbol [sym]
-  (let [sym-ns (namespace sym)]
-    (if sym-ns
-      (symbol (subs (str sym) (+ 1 (count sym-ns))))
-      sym)))
 
 (defn pp-program [insts]
   (dotimes [i (count insts)]
