@@ -1,0 +1,56 @@
+#!/usr/bin/env gosh
+;; -*- coding: utf-8 -*-
+
+(define (samples)
+  ;; blink LED(13)
+  (progn
+   (pin-mode 13 1)
+   (dotimes (aa 21)
+     (digital-write 13 (% aa 2))
+     (delay 500)))
+
+  ;; change brightness of LED(11)
+  (let ((bl 2))
+    (dotimes (aa 8)
+      (analog-write 11 (- bl 1))
+      (setq bl (* bl 2))
+      (delay 1500))
+    (analog-write 11 0))
+  
+  ;; change LED brightness by analog-read
+  (while t
+    (let ((br (analog-read 0)))
+      (analog-write 10 (/ br 4)))
+    (delay 100))
+
+  ;; blink LEDs(10 and 13)
+  (while t
+    (let ((bl 1))
+      (dotimes (aa 9)
+	(digital-write 13 (% aa 2))
+	(analog-write 11 (- bl 1))
+	(setq bl (* bl 2))
+	(delay 500))
+      (analog-write 11 0)))
+
+  (dotimes (xx 100)
+    (write xx)
+    (if (eq 0 (% xx 3))
+	(progn (print-char 70)
+	       (print-char 105)
+	       (print-char 122)
+	       (print-char 122)
+	       (print-char 10))
+	(write xx)))
+  (dotimes (xx 10)
+    (if (eq 0 (% xx 4))
+	(write nil)
+	(write xx)))
+;;   (if (eq 0 (% xx 5))
+;;       (progn (print-char 66)
+;; 	     (print-char 117)
+;; 	     (print-char 122)
+;; 	     (print-char 122)
+;; 	     (print-char 10))
+;;       (write xx))
+  )
