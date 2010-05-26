@@ -34,13 +34,21 @@
        (:VM_VSET lispval-symbol)	  ;; overwrite symbol(operand) by %val
 
        ;; basic arithmetic operation
-       (:VM_LT nil)
-       (:VM_GT nil)
-       (:VM_LE nil)
-       (:VM_GE nil)
-       (:VM_EQ nil)
-       (:VM_PLUS nil)
-       (:VM_MINUS nil)
+       (:VM_LT nil)	;; (< <%val> <stack-top>)
+       (:VM_GT nil)	;; (> <%val> <stack-top>)
+       (:VM_LE nil)	;; (<= <%val> <stack-top>)
+       (:VM_GE nil)	;; (>= <%val> <stack-top>)
+       (:VM_EQ nil)	;; (= <%val> <stack-top>)
+       (:VM_PLUS nil)	;; (+ <stack-top> <%val>)
+       (:VM_MINUS nil)	;; (- <stack-top> <%val>)
+
+       (:VM_IVAL_LT lispval-integer)
+       (:VM_IVAL_GT lispval-integer)
+       (:VM_IVAL_LE lispval-integer)
+       (:VM_IVAL_GE lispval-integer)
+       (:VM_IVAL_EQ lispval-integer)
+       (:VM_IVAL_PLUS lispval-integer)
+       (:VM_IVAL_MINUS lispval-integer)
 
        ;; lisp data operation
        (:VM_CONS nil)	      ;; (cons <stack-top> <%val>)
@@ -193,6 +201,7 @@
       (condp = inst-operand-type
 	    nil (println ")")
 	    'lispval-symbol (println (format " '%s)" (decode-sym inst-operand)))
+            'lispval-integer (println (format " '%d)" (decode-num inst-operand)))
 	    'lispval (println (format " %s)" (lispval-str inst-operand)))
 	    inst-operand-type (println (format " %d)" inst-operand))
 	    )
