@@ -196,7 +196,8 @@
 	    'lispval (println (format " %s)" (lispval-str inst-operand)))
 	    inst-operand-type (println (format " %d)" inst-operand))
 	    )
-      )))
+      ))
+  insts)
 
 (declare compile-pass1)
 
@@ -240,6 +241,16 @@
 			   *vm-builtin-funs*)
 		   (make-num (builtin-fun-id fname))
 		   (make-sym fname)))))
+
+(declare compile-pass1 compile-compact
+         compile-resolve-labels assemble)
+
+(defn kondo-compile [exp]
+  (assemble
+   (pp-program
+    (compile-resolve-labels
+     (compile-compact
+      (compile-pass1 exp))))))
 
 (defn compile-pass1 [exp]
   (cond
@@ -317,7 +328,17 @@
    ))
 
 (defn compile-compact [program]
-  program)
+  (match program
+    ((:VM_IVAL x) (:VM_PUSH) & rest)
+    `((:VM_IVAL_PUSH ~x) ~@(compile-compact rest))
+    ;;
+    ((:VM_VREF x) (:VM_PUSH) & rest)
+    `((:VM_VREF_PUSH ~x) ~@(compile-compact rest))
+    ;;
+    (x & xs)	`(~x ~@(compile-compact xs))
+    ;;
+    ()	program
+  ))
 
 (defn compile-resolve-labels [program]
   (let [[_ labels]
