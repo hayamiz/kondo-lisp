@@ -348,6 +348,27 @@
     ((:VM_IVAL x) (:VM_PUSH) & rest)
     `((:VM_IVAL_PUSH ~x) ~@(compile-compact rest))
     ;;
+    ((:VM_IVAL x) (:VM_LE) & rest)
+    `((:VM_IVAL_LE ~x) ~@(compile-compact rest))
+    ;;
+    ((:VM_IVAL x) (:VM_GE) & rest)
+    `((:VM_IVAL_GE ~x) ~@(compile-compact rest))
+    ;;
+    ((:VM_IVAL x) (:VM_LT) & rest)
+    `((:VM_IVAL_LT ~x) ~@(compile-compact rest))
+    ;;
+    ((:VM_IVAL x) (:VM_GT) & rest)
+    `((:VM_IVAL_GT ~x) ~@(compile-compact rest))
+    ;;
+    ((:VM_IVAL x) (:VM_EQ) & rest)
+    `((:VM_IVAL_EQ ~x) ~@(compile-compact rest))
+    ;;
+    ((:VM_IVAL x) (:VM_PLUS) & rest)
+    `((:VM_IVAL_PLUS ~x) ~@(compile-compact rest))
+    ;;
+    ((:VM_IVAL x) (:VM_MINUS) & rest)
+    `((:VM_IVAL_MINUS ~x) ~@(compile-compact rest))
+    ;;
     ((:VM_VREF x) (:VM_PUSH) & rest)
     `((:VM_VREF_PUSH ~x) ~@(compile-compact rest))
     ;;
