@@ -302,12 +302,16 @@
 	  ;;
 	  ('while pred & body)	(let [retry-label (gensym),
 				      end-label (gensym)]
-				  `(~retry-label
+				  `((:VM_IVAL ~(make-nil))
+                                    ~retry-label
+                                    (:VM_PUSH)
 				    ~@(compile-pass1 pred)
 				    (:VM_BIFN ~end-label)
+                                    (:VM_POP)
 				    ~@(apply concat (map compile-pass1 body))
 				    (:VM_JMP ~retry-label)
-				    ~end-label))
+				    ~end-label
+                                    (:VM_POP)))
 	  ;;
 	  ('dotimes (var num) & body)
 	  (let [end-label (gensym),
@@ -316,6 +320,7 @@
 	      (:VM_BIND ~(make-sym var))
 	      ~retry-label
 	      ~@(apply concat (map compile-pass1 body))
+              (:VM_PUSH)
 	      (:VM_VREF ~(make-sym var))
 	      (:VM_PUSH)
 	      (:VM_IVAL ~(make-num 1))
@@ -326,8 +331,10 @@
 	      (:VM_IVAL ~(make-num num))
 	      (:VM_LE)
 	      (:VM_BIF ~end-label)
+              (:VM_POP)
 	      (:VM_JMP ~retry-label)
 	      ~end-label
+              (:VM_POP)
 	      (:VM_UNBIND 1)))
 	  ;;
 	  _	(compile-funcall (first exp) (rest exp)))
