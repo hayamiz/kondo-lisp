@@ -246,6 +246,30 @@
 
 (declare compile-pass1)
 
+(defn fold-constant [exp]
+  exp)
+
+(defn constant? [exp]
+  (cond
+   (or (= exp 't)
+       (= exp 'T))
+   true
+   ;;
+   :else false))
+
+(defn kondoval-nil? [exp]
+  (and (constant? exp)
+       (cond
+        (or (= exp 'nil)
+            (= exp 'NIL))
+        true
+        ;;
+        :else	false)))
+
+(defn kondoval-t? [exp]
+  (and (constant? exp)
+       (not (kondoval-nil? exp))))
+
 (defn compile-quote [exp]
   (cond
    (or (and (coll? exp)
@@ -300,7 +324,10 @@
         retry-label (gensym)]
     `((:VM_IVAL ~(make-num 0))
       (:VM_BIND ~(make-sym var))
+      (:VM_IVAL ~(make-nil))
+      (:VM_PUSH)
       ~retry-label
+      (:VM_POP)
       ~@(apply concat (map compile-pass1 body))
       (:VM_PUSH)
       ;; (:VM_VREF ~(make-sym var))
@@ -310,15 +337,32 @@
       ;; (:VM_VSET ~(make-sym var))
       ;; (:VM_VREF ~(make-sym var))
       (:VM_VINC ~(make-sym var))
-      (:VM_PUSH)
       (:VM_IVAL ~(make-num num))
       (:VM_LE)
       (:VM_BIF ~end-label)
-      (:VM_POP)
       (:VM_JMP ~retry-label)
       ~end-label
       (:VM_POP)
       (:VM_UNBIND 1))))
+
+(defn compile-while [pred body]
+  (let [retry-label (gensym),
+        end-label (gensym)
+        pred (fold-constant pred)]
+    (if (kondoval-t? pred)
+      `(~retry-label
+        ~@(apply concat (map compile-pass1 body))
+        (:VM_JMP ~retry-label))
+      `((:VM_IVAL ~(make-nil))
+        ~retry-label
+        (:VM_PUSH)
+        ~@(compile-pass1 pred)
+        (:VM_BIFN ~end-label)
+        (:VM_POP)
+        ~@(apply concat (map compile-pass1 body))
+        (:VM_JMP ~retry-label)
+        ~end-label
+        (:VM_POP)))))
 
 (defn builtin-fun-id [fname]
   (index (fn [pair] (= (first pair) fname))
@@ -416,18 +460,7 @@
             `(~@insts
               ~end-label))
           ;;
-	  ('while pred & body)	(let [retry-label (gensym),
-				      end-label (gensym)]
-				  `((:VM_IVAL ~(make-nil))
-                                    ~retry-label
-                                    (:VM_PUSH)
-				    ~@(compile-pass1 pred)
-				    (:VM_BIFN ~end-label)
-                                    (:VM_POP)
-				    ~@(apply concat (map compile-pass1 body))
-				    (:VM_JMP ~retry-label)
-				    ~end-label
-                                    (:VM_POP)))
+	  ('while pred & body)	(compile-while pred body)
 	  ;;
 	  ('dotimes (var num) & body)
           (compile-dotimes var num body)
