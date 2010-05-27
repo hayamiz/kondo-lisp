@@ -323,7 +323,58 @@
 	       ~else-label
 	       ~@(compile-pass1 else-body)
 	       ~end-label))
+          ;;
+          ('cond)
+          `((:VM_IVAL ~(make-nil)))
+          ;;
+          ('cond clause & clauses)
+          (let [end-label (gensym),
+                clauses-insts
+                (apply concat
+                       (map (fn [clause]
+                              (let [pred (first clause)
+                                    body (rest clause)
+                                    next-clause-label (gensym)]
+                                `(~@(compile-pass1 pred)
+                                  (:VM_BIFN ~next-clause-label)
+                                  ~@(apply concat
+                                           (map compile-pass1 body))
+                                  (:VM_JMP ~end-label)
+                                  ~next-clause-label)))
+                            (cons clause clauses)))]
+            `(~@clauses-insts
+              ~end-label))
 	  ;;
+          ('and)
+          `((:VM_IVAL ~(make-t)))
+          ;;
+          ('and exp & rest)
+          (let [end-label (gensym)
+                insts
+                (drop-last
+                 (apply concat
+                        (map (fn [exp]
+                               `(~@(compile-pass1 exp)
+                                 (:VM_BIN ~end-label)))
+                             (cons exp rest))))]
+            `(~@insts
+              ~end-label))
+          ;;
+          ('or)
+          `((:VM_IVAL ~(make-nil)))
+          ;;
+          ('or exp & rest)
+          (let [end-label (gensym)
+                insts
+                (drop-last
+                 (apply concat
+                        (map (fn [exp]
+                               `(~@(compile-pass1 exp)
+                                 (:VM_BIF ~end-label)))
+                             (cons exp rest))))]
+            `(~@insts
+              ~end-label))
+          ;;
 	  ('while pred & body)	(let [retry-label (gensym),
 				      end-label (gensym)]
 				  `((:VM_IVAL ~(make-nil))
