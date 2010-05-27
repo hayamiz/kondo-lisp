@@ -46,11 +46,11 @@
        (:VM_PLUS nil)	;; (+ <stack-top> <%val>)
        (:VM_MINUS nil)	;; (- <stack-top> <%val>)
 
-       (:VM_IVAL_LT lispval-integer)
-       (:VM_IVAL_GT lispval-integer)
-       (:VM_IVAL_LE lispval-integer)
-       (:VM_IVAL_GE lispval-integer)
-       (:VM_IVAL_EQ lispval-integer)
+       (:VM_IVAL_LT lispval-integer)	;; (< <operand> <stack-top>)
+       (:VM_IVAL_GT lispval-integer)	;; (> <operand> <stack-top>)
+       (:VM_IVAL_LE lispval-integer)	;; (<= <operand> <stack-top>)
+       (:VM_IVAL_GE lispval-integer)	;; (>= <operand> <stack-top>)
+       (:VM_IVAL_EQ lispval-integer)	;; (= <operand> <stack-top>)
        (:VM_IVAL_PLUS lispval-integer)
        (:VM_IVAL_MINUS lispval-integer)
 

@@ -391,6 +391,35 @@ extern "C"
             }
         }
         break;
+        case VM_VINC:
+        {
+            var_entry_t *ptr = cur_var - 1;
+            lispval_t sym;
+            sym.data = OPERAND();
+            while(ptr >= vartable){
+                if (sym.data == ptr->sym.data){
+                    break;
+                }
+                ptr --;
+            }
+            if (sym.data == ptr->sym.data){
+                if (IS_NUM(ptr->val)){
+                    vm.val = ptr->val = make_num(EN2N(ptr->val) + 1);
+                } else {
+                    Serial.print("VM_VINC: Type error: ");
+                    Serial.print(SYM2C1(sym), BYTE);
+                    Serial.print(SYM2C2(sym), BYTE);
+                    Serial.println(" is not a number");
+                    HALT("");
+                }
+            } else {
+                Serial.print("Cannot find symbol: ");
+                Serial.print(SYM2C1(sym), BYTE);
+                Serial.print(SYM2C2(sym), BYTE);
+                HALT("");
+            }
+        }
+        break;
         case VM_LT:
         {
             lispval_t x, y;
@@ -463,6 +492,19 @@ extern "C"
             POP();
             y = vm.val;
             vm.val = make_num(EN2N(x) + EN2N(y));
+        }
+            break;
+        case VM_IVAL_LE:
+        {
+            lispval_t x, y;
+            x.data = OPERAND();
+            POP();
+            y = vm.val;
+            if (EN2N(x) <= EN2N(y)) {
+                vm.val = Vt;
+            } else {
+                vm.val = Vnil;
+            }
         }
             break;
         case VM_CONS:
