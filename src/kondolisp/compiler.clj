@@ -384,11 +384,14 @@
          compile-resolve-labels assemble)
 
 (defn kondo-compile [exp]
+  (let [vm-inst-program
+        (compile-resolve-labels
+         (compile-compact
+          (compile-pass1 exp)))]
   (assemble
    (pp-program
-    (compile-resolve-labels
-     (compile-compact
-      (compile-pass1 exp))))))
+    `(~@vm-inst-program
+      (:VM_EXIT))))))
 
 (defn compile-pass1 [exp]
   (cond
