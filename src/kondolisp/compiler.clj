@@ -337,6 +337,7 @@
       ;; (:VM_VSET ~(make-sym var))
       ;; (:VM_VREF ~(make-sym var))
       (:VM_VINC ~(make-sym var))
+      (:VM_PUSH)
       (:VM_IVAL ~(make-num num))
       (:VM_LE)
       (:VM_BIF ~end-label)
