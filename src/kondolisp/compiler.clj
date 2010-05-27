@@ -32,8 +32,10 @@
        ;; lisp namespace operation
        (:VM_BIND lispval-symbol)	;; bind stack-top value to symbol(operand)
        (:VM_UNBIND integer) ;; unbind symbol(operand)
-       (:VM_VREF lispval-symbol)	  ;; refer value of symbol(operand)
-       (:VM_VSET lispval-symbol)	  ;; overwrite symbol(operand) by %val
+       (:VM_VREF lispval-symbol)	;; refer value of symbol(operand)
+       (:VM_VSET lispval-symbol)	;; overwrite symbol(operand) by %val
+       (:VM_VINC lispval-symbol)	;; increment value of symbol(operand)
+       (:VM_VDEC lispval-symbol)	;; increment value of symbol(operand)
 
        ;; basic arithmetic operation
        (:VM_LT nil)	;; (< <%val> <stack-top>)
@@ -270,6 +272,54 @@
 	     (map compile-pass1 body))
     (:VM_UNBIND ~(count bindings))))
 
+(defn compile-cond [clauses]
+  (match clauses
+    ()
+    `((:VM_IVAL ~(make-nil)))
+    ;;
+    (clause & clauses)
+    (let [end-label (gensym),
+          clauses-insts
+          (apply concat
+                 (map (fn [clause]
+                        (let [pred (first clause)
+                              body (rest clause)
+                              next-clause-label (gensym)]
+                          `(~@(compile-pass1 pred)
+                            (:VM_BIFN ~next-clause-label)
+                            ~@(apply concat
+                                     (map compile-pass1 body))
+                            (:VM_JMP ~end-label)
+                            ~next-clause-label)))
+                      (cons clause clauses)))]
+      `(~@clauses-insts
+        ~end-label))))
+
+(defn compile-dotimes [var num body]
+  (let [end-label (gensym),
+        retry-label (gensym)]
+    `((:VM_IVAL ~(make-num 0))
+      (:VM_BIND ~(make-sym var))
+      ~retry-label
+      ~@(apply concat (map compile-pass1 body))
+      (:VM_PUSH)
+      ;; (:VM_VREF ~(make-sym var))
+      ;; (:VM_PUSH)
+      ;; (:VM_IVAL ~(make-num 1))
+      ;; (:VM_PLUS)
+      ;; (:VM_VSET ~(make-sym var))
+      ;; (:VM_VREF ~(make-sym var))
+      (:VM_VINC ~(make-sym var))
+      (:VM_PUSH)
+      (:VM_IVAL ~(make-num num))
+      (:VM_LE)
+      (:VM_BIF ~end-label)
+      (:VM_POP)
+      (:VM_JMP ~retry-label)
+      ~end-label
+      (:VM_POP)
+      (:VM_UNBIND 1))))
+
 (defn builtin-fun-id [fname]
   (index (fn [pair] (= (first pair) fname))
 	 *vm-builtin-funs*))
@@ -334,26 +384,7 @@
 	       ~@(compile-pass1 else-body)
 	       ~end-label))
           ;;
-          ('cond)
-          `((:VM_IVAL ~(make-nil)))
-          ;;
-          ('cond clause & clauses)
-          (let [end-label (gensym),
-                clauses-insts
-                (apply concat
-                       (map (fn [clause]
-                              (let [pred (first clause)
-                                    body (rest clause)
-                                    next-clause-label (gensym)]
-                                `(~@(compile-pass1 pred)
-                                  (:VM_BIFN ~next-clause-label)
-                                  ~@(apply concat
-                                           (map compile-pass1 body))
-                                  (:VM_JMP ~end-label)
-                                  ~next-clause-label)))
-                            (cons clause clauses)))]
-            `(~@clauses-insts
-              ~end-label))
+          ('cond & clauses)	(compile-cond clauses)
 	  ;;
           ('and)
           `((:VM_IVAL ~(make-t)))
@@ -399,28 +430,8 @@
                                     (:VM_POP)))
 	  ;;
 	  ('dotimes (var num) & body)
-	  (let [end-label (gensym),
-		retry-label (gensym)]
-	    `((:VM_IVAL ~(make-num 0))
-	      (:VM_BIND ~(make-sym var))
-	      ~retry-label
-	      ~@(apply concat (map compile-pass1 body))
-              (:VM_PUSH)
-	      (:VM_VREF ~(make-sym var))
-	      (:VM_PUSH)
-	      (:VM_IVAL ~(make-num 1))
-	      (:VM_PLUS)
-	      (:VM_VSET ~(make-sym var))
-	      (:VM_VREF ~(make-sym var))
-	      (:VM_PUSH)
-	      (:VM_IVAL ~(make-num num))
-	      (:VM_LE)
-	      (:VM_BIF ~end-label)
-              (:VM_POP)
-	      (:VM_JMP ~retry-label)
-	      ~end-label
-              (:VM_POP)
-	      (:VM_UNBIND 1)))
+          (compile-dotimes var num body)
+	  
 	  ;;
 	  _	(compile-funcall (first exp) (rest exp)))
    ;;
