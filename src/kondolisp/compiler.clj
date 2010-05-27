@@ -214,22 +214,32 @@
    (= (bit-and 0xc001 val) 0x4001) (format "'%s" (decode-sym val))))
 
 (defn pp-program [insts]
-  (dotimes [i (count insts)]
-    (let [inst (nth insts i),
-	  inst-name (first inst)
-	  inst-spec (some (fn [spec] (and (= inst-name (first spec)) spec))
-			  *vm-inst-list*)
-	  inst-operand (second inst)
-	  inst-operand-type (second inst-spec)]
-      (print (format "%d: (%s" i inst-name))
-      (condp = inst-operand-type
-	    nil (println ")")
-	    'lispval-symbol (println (format " '%s)" (decode-sym inst-operand)))
-            'lispval-integer (println (format " '%d)" (decode-num inst-operand)))
-	    'lispval (println (format " %s)" (lispval-str inst-operand)))
-	    inst-operand-type (println (format " %d)" inst-operand))
-	    )
-      ))
+  (when (not (empty? insts))
+    (reduce
+     (fn [idx inst]
+       (if (symbol? inst)
+         (do (println (format "  %s" (str inst)))
+             idx)
+         (do (let [inst-name (first inst)
+                   inst-spec (some (fn [spec] (and (= inst-name (first spec)) spec))
+                                   *vm-inst-list*)
+                   inst-operand (second inst)
+                   inst-operand-type (second inst-spec)]
+               (print (format "%d: (%s" idx inst-name))
+               (if (symbol? inst-operand)
+                 (println (format " %s)" (str inst-operand)))
+                 (condp = inst-operand-type
+                   nil (println ")")
+                   'lispval-symbol (println (format " '%s)"
+                                                    (decode-sym inst-operand)))
+                   'lispval-integer (println (format " '%d)"
+                                                     (decode-num inst-operand)))
+                   'lispval (println (format " %s)"
+                                             (lispval-str inst-operand)))
+                   inst-operand-type (println (format " %d)"
+                                                      inst-operand)))))
+             (inc idx))))
+     0 insts))
   insts)
 
 (declare compile-pass1)
