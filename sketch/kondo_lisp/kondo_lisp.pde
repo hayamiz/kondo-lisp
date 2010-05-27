@@ -16,20 +16,22 @@ extern "C"
         }                                               \
     }
 
-#define CELLSPACE_SIZE  1024
+#define CELLBLOCK_ELEM_NUM  16
+#define CELLBLOCK_SIZE  (CELLBLOCK_ELEM_NUM * sizeof(cell_t))
+#define CELLBLOCK_NUM	16
+
+#define CELLSPACE_SIZE  (CELLBLOCK_NUM * CELLBLOCK_SIZE) // 1024
 #define CELLSPACE_ALIGN 32
 
-#define STACK_SIZE 128
+#define STACK_SIZE (128)
 #define VARTABLE_SIZE	(128+32)
 
-#define CELLBLOCK_ENUM  16
-#define CELLBLOCK_SIZE  (CELLBLOCK_ENUM * sizeof(cell_t))
 
 #define HALT(msg)                               \
     {                                           \
         Serial.print("HALT by error: ");        \
         Serial.println(msg);                    \
-        Serial.end();                           \
+        Serial.print(0, BYTE);                  \
         while(1){};                             \
     }
 
@@ -140,7 +142,7 @@ extern "C"
                     return ptr;
                 }
             }
-            blk += CELLBLOCK_ENUM;
+            blk += CELLBLOCK_ELEM_NUM;
         }
         return NULL;
     }
@@ -482,6 +484,7 @@ extern "C"
             Serial.print(", operand: ");
             Serial.println(OPERAND(), DEC);
         }
+        
 
         vm.pc++;
         goto dispatch;
