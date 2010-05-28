@@ -332,7 +332,7 @@
       (:VM_PUSH)
       (:VM_VINC ~(make-sym var))
       (:VM_PUSH)
-      (:VM_IVAL ~(make-num num))
+      ~@(compile-pass1 num)
       (:VM_LE)
       (:VM_BIF ~end-label)
       (:VM_JMP ~retry-label)
