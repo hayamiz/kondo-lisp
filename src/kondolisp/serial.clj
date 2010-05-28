@@ -2,7 +2,7 @@
 
 (ns kondolisp.serial
   (:use [clojure core]
-        [clojure.contrib str-utils java-utils pprint])
+        [clojure.contrib str-utils java-utils pprint  seq-utils])
   (:import (gnu.io CommPort
                    CommPortIdentifier
                    SerialPort)
@@ -87,5 +87,8 @@
 (defn write-serial [bytes]
   (let [serial @*serial*]
     (when serial
-      (let [out (.getOutputStream serial)]
-        (.write out (to-byte-array bytes))))))
+      (let [out (.getOutputStream serial),
+            bytes-blocks (partition-all 32 bytes)]
+        (doseq [bytes bytes-blocks]
+          (.write out (to-byte-array bytes))
+          (Thread/sleep 50))))))
