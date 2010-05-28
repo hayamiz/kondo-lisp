@@ -25,7 +25,7 @@ extern "C"
 #define CELLSPACE_ALIGN 32
 
 #define STACK_SIZE (128)
-#define VARTABLE_SIZE	(128+32)
+#define VARTABLE_SIZE	(128)
 
 #define CODE_SIZE (15 * 1024)
 
@@ -282,25 +282,35 @@ extern "C"
         boolean pred;
         switch(op){
         case VM_LT:
+        case VM_IVAL_LT:
             pred = EN2N(x) < EN2N(y);
             break;
         case VM_GT:
+        case VM_IVAL_GT:
             pred = EN2N(x) > EN2N(y);
             break;
         case VM_LE:
+        case VM_IVAL_LE:
             pred = EN2N(x) <= EN2N(y);
             break;
         case VM_GE:
+        case VM_IVAL_GE:
             pred = EN2N(x) >= EN2N(y);
             break;
         case VM_EQ:
+        case VM_IVAL_EQ:
             pred = EN2N(x) == EN2N(y);
             break;
         case VM_PLUS:
+        case VM_IVAL_PLUS:
             pred = EN2N(x) + EN2N(y);
             break;
         case VM_MINUS:
+        case VM_IVAL_MINUS:
             pred = EN2N(x) - EN2N(y);
+            break;
+        default:
+            HALT("binop: unknown operator");
             break;
         }
         if (pred){
