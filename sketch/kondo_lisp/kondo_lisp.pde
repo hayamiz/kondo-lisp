@@ -198,40 +198,137 @@ extern "C"
         Serial.println("");
     }
 
+    vm_t vm;
+    
+    word
+    vm_push(word x)
+    {
+        if (vm.sp >= (vm.stack + STACK_SIZE)) {
+            HALT("Stack overflow");
+        }
+        *vm.sp = (word) x;
+        vm.sp++;
+        return x;
+    }
+    word
+    vm_pop(void)
+    {
+        return (vm.val.data = *(--vm.sp));
+    }
+    word
+    vm_operand(void)
+    {
+        return eeprom_readword((word)vm.pc+2);
+    }
+    word
+    vm_opecode(void)
+    {
+        return eeprom_readword((word)vm.pc);
+    }
+    word
+    vm_ival()
+    {
+        return vm.val.data = vm_operand();
+    }
+    word
+    vm_vref()
+    {
+        var_entry_t *ptr = cur_var - 1;
+        lispval_t sym;
+        sym.data = vm_operand();
+        while(ptr >= vartable){
+            if (sym.data == ptr->sym.data){
+                break;
+            }
+            ptr --;
+        }
+        if (sym.data == ptr->sym.data){
+            vm.val = ptr->val;
+        } else {
+            Serial.print("Cannot find symbol: ");
+            Serial.print(SYM2C1(sym), BYTE);
+            Serial.print(SYM2C2(sym), BYTE);
+            HALT("");
+        }
+        return vm.val.data;
+    }
+    word
+    vm_vset()
+    {
+        var_entry_t *ptr = cur_var - 1;
+        lispval_t sym;
+        sym.data = vm_operand();
+        while(ptr >= vartable){
+            if (sym.data == ptr->sym.data){
+                break;
+            }
+            ptr --;
+        }
+        if (sym.data == ptr->sym.data){
+            ptr->val = vm.val;
+        } else {
+            Serial.print("Cannot find symbol: ");
+            Serial.print(SYM2C1(sym), BYTE);
+            Serial.print(SYM2C2(sym), BYTE);
+            HALT("");
+        }
+    }
+    lispval_t
+    vm_binop(word op)
+    {
+        lispval_t x, y;
+        x = vm.val;
+        y.data = vm_pop();
+        boolean pred;
+        switch(op){
+        case VM_LT:
+            pred = EN2N(x) < EN2N(y);
+            break;
+        case VM_GT:
+            pred = EN2N(x) > EN2N(y);
+            break;
+        case VM_LE:
+            pred = EN2N(x) <= EN2N(y);
+            break;
+        case VM_GE:
+            pred = EN2N(x) >= EN2N(y);
+            break;
+        case VM_EQ:
+            pred = EN2N(x) == EN2N(y);
+            break;
+        case VM_PLUS:
+            pred = EN2N(x) + EN2N(y);
+            break;
+        case VM_MINUS:
+            pred = EN2N(x) - EN2N(y);
+            break;
+        }
+        if (pred){
+            vm.val = Vt;
+        } else {
+            vm.val = Vnil;
+        }
+        return vm.val;
+    }
+
     lispval_t
     vm_eval()
     {
-        vm_t vm;
+        // initialize VM
         vm.val.data = 0;
         vm.stack = stack;
         vm.pc = 0;
         vm.fp = NULL;
         vm.sp = vm.stack;
 
-#define PUSH(x) \
-        {                                           \
-            if (vm.sp >= (vm.stack + STACK_SIZE)) { \
-                HALT("Stack overflow");             \
-            }                                       \
-            *vm.sp = (word) x;                      \
-            vm.sp++;                                \
-        }
-        
-#define POP() (vm.val.data = *(--vm.sp))
-        
-#define OPERAND()                               \
-        eeprom_readword((word)vm.pc+2)
-#define OPECODE()                               \
-        eeprom_readword((word)vm.pc)
-
     dispatch:
         if (debug_mode) {
             Serial.print("PC: ");
             Serial.print((word)vm.pc / sizeof(vminst_t), DEC);
             Serial.print(", opecode: ");
-            Serial.print(OPECODE(), DEC);
+            Serial.print(vm_opecode(), DEC);
             Serial.print(", operand: ");
-            Serial.print(OPERAND(), DEC);
+            Serial.print(vm_operand(), DEC);
             Serial.print(", VAL: ");
             write(vm.val);
             Serial.print(", SP: ");
@@ -240,60 +337,38 @@ extern "C"
             Serial.print((word)vm.fp, DEC);
             Serial.println("");
         }
-        switch(OPECODE()){
+        switch(vm_opecode()){
         case VM_IVAL:
-            vm.val.data = OPERAND();
+            vm_ival();
             break;
         case VM_IVAL_PUSH:
-            PUSH(OPERAND());
-            break;
-        case VM_VREF_PUSH:
-        {
-            var_entry_t *ptr = cur_var - 1;
-            lispval_t sym;
-            sym.data = OPERAND();
-            while(ptr >= vartable){
-                if (sym.data == ptr->sym.data){
-                    break;
-                }
-                ptr --;
-            }
-            if (sym.data == ptr->sym.data){
-                vm.val = ptr->val;
-            } else {
-                Serial.print("Cannot find symbol: ");
-                Serial.print(SYM2C1(sym), BYTE);
-                Serial.print(SYM2C2(sym), BYTE);
-                HALT("");
-            }
-            PUSH(vm.val.data);
-        }
+            vm_push(vm_ival());
             break;
         case VM_PUSH:
-            PUSH(vm.val.data);
+            vm_push(vm.val.data);
             break;
         case VM_POP:
-            POP();
+            vm_pop();
             break;
         case VM_JMP:
-            vm.pc = (vminst_t *) (OPERAND() * sizeof(vminst_t));
+            vm.pc = (vminst_t *) (vm_operand() * sizeof(vminst_t));
             goto dispatch;
         case VM_BIF:
             if (!IS_NIL(vm.val)){
-                vm.pc = (vminst_t *) (OPERAND() * sizeof(vminst_t));
+                vm.pc = (vminst_t *) (vm_operand() * sizeof(vminst_t));
             } else {
                 vm.pc++;
             }
             goto dispatch;
         case VM_BIFN:
             if (IS_NIL(vm.val)){
-                vm.pc = (vminst_t *) (OPERAND() * sizeof(vminst_t));
+                vm.pc = (vminst_t *) (vm_operand() * sizeof(vminst_t));
             } else {
                 vm.pc++;
             }
             goto dispatch;
         case VM_PUSH_FRAME:
-            PUSH(vm.fp);
+            vm_push((word) vm.fp);
             vm.fp = vm.sp - 1;
             break;
         case VM_FUNCALL:
@@ -305,7 +380,7 @@ extern "C"
             lispval_t a3 = Vnil;
             lispval_t rest = Vnil;
             lispval_t tmp;
-            lispval_t fname; fname.data = OPERAND();
+            lispval_t fname; fname.data = vm_operand();
             if (nargs >= 1) a1.data = (*--vm.sp);
             if (nargs >= 2) a2.data = (*--vm.sp);
             if (nargs >= 3) a3.data = (*--vm.sp);
@@ -330,7 +405,7 @@ extern "C"
                 HALT("FUNCALL by symbol not implemented");
             }
             tmp = vm.val;
-            vm.fp = (word *) POP(); // pop stack frame
+            vm.fp = (word *) vm_pop(); // restore stack frame
             vm.val = tmp;
         }
             break;
@@ -338,13 +413,13 @@ extern "C"
             if (((word)cur_var - (word)vartable) >= VARTABLE_SIZE){
                 HALT("Vartable overflow");
             }
-            cur_var->sym.data = OPERAND();
+            cur_var->sym.data = vm_operand();
             cur_var->val = vm.val;
             cur_var++;
             break;
         case VM_UNBIND:
         {
-            int nvar = OPERAND();
+            int nvar = vm_operand();
             while(nvar > 0){
                 cur_var->sym.data = 0;
                 cur_var->val.data = 0;
@@ -354,52 +429,19 @@ extern "C"
         }
             break;
         case VM_VREF:
-        {
-            var_entry_t *ptr = cur_var - 1;
-            lispval_t sym;
-            sym.data = OPERAND();
-            while(ptr >= vartable){
-                if (sym.data == ptr->sym.data){
-                    break;
-                }
-                ptr --;
-            }
-            if (sym.data == ptr->sym.data){
-                vm.val = ptr->val;
-            } else {
-                Serial.print("Cannot find symbol: ");
-                Serial.print(SYM2C1(sym), BYTE);
-                Serial.print(SYM2C2(sym), BYTE);
-                HALT("");
-            }
-        }
+            vm_vref();
+            break;
+        case VM_VREF_PUSH:
+            vm_push(vm_vref());
             break;
         case VM_VSET:
-        {
-            var_entry_t *ptr = cur_var - 1;
-            lispval_t sym;
-            sym.data = OPERAND();
-            while(ptr >= vartable){
-                if (sym.data == ptr->sym.data){
-                    break;
-                }
-                ptr --;
-            }
-            if (sym.data == ptr->sym.data){
-                ptr->val = vm.val;
-            } else {
-                Serial.print("Cannot find symbol: ");
-                Serial.print(SYM2C1(sym), BYTE);
-                Serial.print(SYM2C2(sym), BYTE);
-                HALT("");
-            }
-        }
-        break;
+            vm_vset();
+            break;
         case VM_VINC:
         {
             var_entry_t *ptr = cur_var - 1;
             lispval_t sym;
-            sym.data = OPERAND();
+            sym.data = vm_operand();
             while(ptr >= vartable){
                 if (sym.data == ptr->sym.data){
                     break;
@@ -425,98 +467,31 @@ extern "C"
         }
         break;
         case VM_LT:
-        {
-            lispval_t x, y;
-            x = vm.val;
-            POP();
-            y = vm.val;
-            if (EN2N(x) < EN2N(y)) {
-                vm.val = Vt;
-            } else {
-                vm.val = Vnil;
-            }
-        }
-            break;
         case VM_GT:
-        {
-            lispval_t x, y;
-            x = vm.val;
-            POP();
-            y = vm.val;
-            if (EN2N(x) > EN2N(y)) {
-                vm.val = Vt;
-            } else {
-                vm.val = Vnil;
-            }
-        }
-        break;
         case VM_LE:
-        {
-            lispval_t x, y;
-            x = vm.val;
-            POP();
-            y = vm.val;
-            if (EN2N(x) <= EN2N(y)) {
-                vm.val = Vt;
-            } else {
-                vm.val = Vnil;
-            }
-        }
-            break;
         case VM_GE:
-        {
-            lispval_t x, y;
-            x = vm.val;
-            POP();
-            y = vm.val;
-            if (EN2N(x) >= EN2N(y)) {
-                vm.val = Vt;
-            } else {
-                vm.val = Vnil;
-            }
-        }
-            break;
         case VM_EQ:
-        {
-            lispval_t x, y;
-            x = vm.val;
-            POP();
-            y = vm.val;
-            if (x.data == y.data) {
-                vm.val = Vt;
-            } else {
-                vm.val = Vnil;
-            }
-        }
-            break;
         case VM_PLUS:
-        {
-            lispval_t x, y;
-            x = vm.val;
-            POP();
-            y = vm.val;
-            vm.val = make_num(EN2N(x) + EN2N(y));
-        }
+        case VM_MINUS:
+            vm_binop(vm_opecode());
             break;
+        case VM_IVAL_LT:
+        case VM_IVAL_GT:
         case VM_IVAL_LE:
-        {
-            lispval_t x, y;
-            x.data = OPERAND();
-            POP();
-            y = vm.val;
-            if (EN2N(x) <= EN2N(y)) {
-                vm.val = Vt;
-            } else {
-                vm.val = Vnil;
-            }
-        }
+        case VM_IVAL_GE:
+        case VM_IVAL_EQ:
+        case VM_IVAL_PLUS:
+        case VM_IVAL_MINUS:
+            vm_ival();
+            vm_binop(vm_opecode());
             break;
+        case VM_IVAL_CONS:
+            vm_ival();
         case VM_CONS:
         {
             lispval_t car, cdr;
             cdr = vm.val;
-            POP();
-            car = vm.val;
+            car.data = vm_pop();
             vm.val = make_cell(car, cdr);
             break;
         }
@@ -526,11 +501,10 @@ extern "C"
             Serial.print("Not implemented. addr: ");
             Serial.print((word)vm.pc, DEC);
             Serial.print(", opecode: ");
-            Serial.print(OPECODE(), DEC);
+            Serial.print(vm_opecode(), DEC);
             Serial.print(", operand: ");
-            Serial.println(OPERAND(), DEC);
+            Serial.println(vm_operand(), DEC);
         }
-        
 
         vm.pc++;
         goto dispatch;

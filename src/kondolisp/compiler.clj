@@ -18,7 +18,6 @@
        ;; basic stack and register operation
        (:VM_IVAL lispval)
        (:VM_IVAL_PUSH lispval)
-       (:VM_VREF_PUSH lispval-symbol)
        (:VM_PUSH nil)
        (:VM_POP nil)
 
@@ -33,6 +32,7 @@
        (:VM_BIND lispval-symbol)	;; bind stack-top value to symbol(operand)
        (:VM_UNBIND integer) ;; unbind symbol(operand)
        (:VM_VREF lispval-symbol)	;; refer value of symbol(operand)
+       (:VM_VREF_PUSH lispval-symbol)
        (:VM_VSET lispval-symbol)	;; overwrite symbol(operand) by %val
        (:VM_VINC lispval-symbol)	;; increment value of symbol(operand)
        (:VM_VDEC lispval-symbol)	;; increment value of symbol(operand)
@@ -330,12 +330,6 @@
       (:VM_POP)
       ~@(apply concat (map compile-pass1 body))
       (:VM_PUSH)
-      ;; (:VM_VREF ~(make-sym var))
-      ;; (:VM_PUSH)
-      ;; (:VM_IVAL ~(make-num 1))
-      ;; (:VM_PLUS)
-      ;; (:VM_VSET ~(make-sym var))
-      ;; (:VM_VREF ~(make-sym var))
       (:VM_VINC ~(make-sym var))
       (:VM_PUSH)
       (:VM_IVAL ~(make-num num))
