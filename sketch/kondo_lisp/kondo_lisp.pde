@@ -9,7 +9,7 @@ extern "C"
 #define assert(cond)                                    \
     {                                                   \
         if (!(cond)){                                   \
-            Serial.print("Assertion failed at ");       \
+            Serial.print("assert fail: ");              \
             Serial.print(__FILE__);                     \
             Serial.print(':', BYTE);                    \
             Serial.println(__LINE__, DEC);              \
@@ -37,7 +37,7 @@ extern "C"
         while(1){};                             \
     }
 
-    PROGMEM prog_uchar code[CODE_SIZE];
+    // PROGMEM prog_uchar code[CODE_SIZE];
 
     void
     setup()
@@ -115,7 +115,7 @@ extern "C"
                                       + STACK_SIZE
                                       + CELLSPACE_ALIGN - 1);
         if (cellspace == NULL) {
-            HALT("Cannot allocate enough memory for cell space and var table.");
+            HALT("Not enough memory for kondo-lisp");
         }
         int rem = ((int)cellspace) % CELLSPACE_ALIGN;
         if (rem != 0) {
@@ -148,6 +148,7 @@ extern "C"
             }
             blk += CELLBLOCK_ELEM_NUM;
         }
+        HALT("Failed to allocate cons cell.");
         return NULL;
     }
 
@@ -548,8 +549,6 @@ extern "C"
             if (nargs > 1) tmp += EN2N(a2);
             if (nargs > 2) tmp += EN2N(a3);
             if (nargs > 3){
-                Serial.print("plus: ");
-                writeln(rest);
                 while(!IS_NIL(rest)){
                     tmp += EN2N(CAR(rest));
                     rest = CDR(rest);
