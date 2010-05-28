@@ -1,4 +1,5 @@
 
+#include <avr/pgmspace.h>
 #include <EEPROM.h>
 
 extern "C"
@@ -26,6 +27,7 @@ extern "C"
 #define STACK_SIZE (128)
 #define VARTABLE_SIZE	(128+32)
 
+#define CODE_SIZE (15 * 1024)
 
 #define HALT(msg)                               \
     {                                           \
@@ -34,6 +36,8 @@ extern "C"
         Serial.print(0, BYTE);                  \
         while(1){};                             \
     }
+
+    PROGMEM prog_uchar code[CODE_SIZE];
 
     void
     setup()
