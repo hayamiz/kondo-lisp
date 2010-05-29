@@ -9,6 +9,10 @@ BUILTIN_H = sketch/kondo_lisp/builtin.h
 all: jar $(VMINST_H) $(BUILTIN_H)
 
 deps:
+	(cd kondo-gui; ant jar)
+	for jarfile in $$(find kondo-gui/dist -type f -name "*.jar"); do \
+	  ln -sf $$(readlink -f $$jarfile) ./lib; \
+	done
 	ln -sf /usr/share/java/RXTXcomm.jar ./lib/
 	lein deps
 

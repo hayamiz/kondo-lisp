@@ -1,12 +1,14 @@
 (ns kondolisp.main
   (:gen-class)
   (:use [clojure core]
-	[clojure.contrib pprint command-line]
+	[clojure.contrib pprint command-line java-utils]
 	[clj-match])
   (:require [kondolisp compiler serial])
-  (:import [sun.misc Signal SignalHandler]
-	   [java.util.concurrent LinkedBlockingQueue TimeUnit CyclicBarrier]
-	   [java.nio.channels Selector]))
+  (:import (sun.misc Signal SignalHandler)
+	   (java.util.concurrent LinkedBlockingQueue
+				 TimeUnit CyclicBarrier)
+	   (java.nio.channels Selector)
+	   (javax.swing UIManager)))
 
 (defn- sys-println [arg]
   (.println System/out arg))
@@ -70,6 +72,15 @@
       (kondolisp.serial/close-serial)
       ))))
 
+(defn kondo-gui []
+  (try
+   (UIManager/setLookAndFeel
+    (UIManager/getSystemLookAndFeelClassName))
+   (catch Exception _ ))
+  (let [view (kondolisp.gui.kondoView.)]
+    (.setVisible view true))
+  )
+
 (defn -main [& argv]
   (match argv
     ("header" "vminst" & rest)
@@ -81,7 +92,8 @@
     ("repl" & rest)
     (kondo-repl)
     ;;
-    _	(sys-println (str argv)))
+    _	(do (sys-println (str argv))
+	    (kondo-gui)))
   true)
 
 
