@@ -3,8 +3,10 @@
   (:use [clojure core]
 	[clojure.contrib pprint command-line java-utils]
 	[clj-match])
-  (:require [kondolisp compiler serial])
+  (:require [kondolisp compiler serial]
+	    [clojure.contrib str-utils2])
   (:import (sun.misc Signal SignalHandler)
+	   (java.awt.event ActionListener WindowListener)
 	   (java.util.concurrent LinkedBlockingQueue
 				 TimeUnit CyclicBarrier)
 	   (java.nio.channels Selector)
@@ -14,6 +16,11 @@
   (.println System/out arg))
 (defn- sys-print [arg]
   (.println System/out arg))
+
+(defn- except-simple-msg [exception]
+  (clojure.contrib.str-utils2/replace
+   (.getMessage exception)
+   #"(\w+\.)+(\w+)?Exception:[ \t]*" ""))
 
 (defn kondo-repl []
   (kondolisp.serial/open-serial)
@@ -72,13 +79,103 @@
       (kondolisp.serial/close-serial)
       ))))
 
+(defn set-status [view str]
+  (.setText (.. view gStatusLabel) str))
+
+(defn kondo-setup-view [view]
+  (let [serial-ports (kondolisp.serial/get-serial-ports)]
+    (if (> (count serial-ports) 0)
+      (.setSerialPortMenu
+       view
+       (into-array (kondolisp.serial/get-serial-ports)))))
+  (.addActionListener
+   (.gCommandRunButton view)
+   (proxy [ActionListener] []
+     (actionPerformed [evt]
+		      (let [cmd-str (.. view gCommandInputTextArea getText)]
+			(try
+			 (with-in-str cmd-str
+			   (while true
+				  (while ;; discard white spaces
+				   (let [c (.read *in*)]
+				     (match c
+				       -1 (throw
+					   (RuntimeException. "Evaluation finished"))
+				       9  true ;; tab
+				       10 true ;; newline
+				       12 true ;; formfeed
+				       13 true ;; return
+				       32 true ;; space
+				       _	(do (.unread *in* c)
+						    false))))
+				  (let [cmd (read),
+					byteseq
+					(kondolisp.compiler/kondo-compile cmd)]
+				    (kondolisp.serial/write-serial
+				     (concat byteseq [0 0 0 0])))))
+			 (catch clojure.lang.LispReader$ReaderException e
+			   (match (except-simple-msg e)
+			     "EOF while reading"
+			     (set-status view "Error: EOF while reading")
+			     ;;
+			     msg	(do (sys-println msg)
+					    (set-status view (str "Read error: " msg)))
+			     ))
+			 (catch RuntimeException e
+			   (match (except-simple-msg e)
+			     "Evaluation finished"
+			     (set-status view (str "Evaluation finished: " cmd-str))
+			     ;;
+			     msg	(set-status view msg))
+			   ))))
+     ))
+
+  (let [serial-printer
+	(Thread.
+	 (fn []
+	   (while (not (.isInterrupted (Thread/currentThread)))
+		  (if (kondolisp.serial/serial-opened?)
+		    (let [serial-output (kondolisp.serial/read-serial 1024),
+			  text-area (.. view gSerialOutputTextArea)]
+		      (.append text-area serial-output)
+		      (.setCaretPosition text-area (.. text-area getDocument getLength)))
+		    (Thread/sleep 1000)))))]
+    (.start serial-printer)
+    (.addWindowListener
+     view
+     (proxy [WindowListener] []
+       (windowActivated [evt]
+			nil)
+       (windowClosed [evt]
+		     (.interrupt serial-printer)
+		     (kondolisp.serial/close-serial))
+       (windowClosing [evt]
+		      nil)
+       (windowDeactivated [evt]
+			  nil)
+       (windowDeiconified [evt]
+			  nil)
+       (windowIconified [evt]
+			nil)
+       (windowOpened [evt]
+		     nil)))))
+
 (defn kondo-gui []
   (try
    (UIManager/setLookAndFeel
     (UIManager/getSystemLookAndFeelClassName))
    (catch Exception _ ))
   (let [view (kondolisp.gui.kondoView.)]
-    (.setVisible view true))
+    (try
+     (kondolisp.serial/open-serial)
+     (kondo-setup-view view)
+     (.setVisible view true)
+     (catch Exception e
+       (sys-println (str e))
+       (sys-println (.getMessage e))
+       (sys-println (str (.getStackTrace e))))
+     (finally
+      )))
   )
 
 (defn -main [& argv]

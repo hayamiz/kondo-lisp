@@ -11,15 +11,30 @@
 
 package kondolisp.gui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JMenuItem;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JTextField;
+
 /**
  *
  * @author haya
  */
 public class kondoView extends javax.swing.JFrame {
+
+    public javax.swing.JMenuBar gMenuBar;
+    public javax.swing.JTextArea gCommandInputTextArea;
+    public javax.swing.JButton gCommandRunButton;
+    public javax.swing.JTextArea gSerialOutputTextArea;
+    public ButtonGroup gSerialPortGroup;
+    public javax.swing.JLabel gStatusLabel;
+
+    private javax.swing.DefaultListModel pCommandHistoryListModel;
 
     /** Creates new form kondoView */
     public kondoView() {
@@ -31,6 +46,58 @@ public class kondoView extends javax.swing.JFrame {
         } catch (UnsupportedLookAndFeelException ex) {
         }
         initComponents();
+
+        this.setSerialPortMenu(new String[0]);
+        this.pCommandHistoryListModel = new DefaultListModel();
+        this.commandHistoryList.setModel(pCommandHistoryListModel);
+        this.statusLabel.setText("");
+        
+        // export components
+        this.gMenuBar = this.menuBar;
+        this.gCommandInputTextArea = this.commandInputTextArea;
+        this.gCommandRunButton = this.commandRunButton;
+        this.gSerialOutputTextArea = this.serialOutputTextArea;
+        this.gSerialPortGroup = null;
+        this.gStatusLabel = this.statusLabel;
+    }
+
+    public void setSerialPortMenu(String[] portNames){
+        this.setSerialPortMenu(portNames, null);
+    }
+    public void setSerialPortMenu(String[] portNames,
+            ActionListener listener){
+        this.serialPortMenu.removeAll();
+        if (portNames.length > 0){
+            ButtonGroup group = new ButtonGroup();
+            JRadioButtonMenuItem menu_items[] =
+                    new JRadioButtonMenuItem[portNames.length];
+            for(int i = 0;i < portNames.length;i++){
+                menu_items[i] = new JRadioButtonMenuItem(portNames[i]);
+                if (listener == null){
+                    menu_items[i].addActionListener(listener);
+                }
+                this.serialPortMenu.add(menu_items[i]);
+                group.add(menu_items[i]);
+            }
+            group.setSelected(menu_items[0].getModel(), true);
+            this.gSerialPortGroup = group;
+        } else {
+            JMenuItem item = new JMenuItem();
+            item.setText("No serial port");
+            this.serialPortMenu.add(item);
+        }
+    }
+
+    public String getSelectedSerialPort(){
+        if (this.serialPortMenu.getItemCount() > 0 &&
+                this.serialPortMenu.getItem(0) instanceof JRadioButtonMenuItem){
+            for(int i = 0;i < this.serialPortMenu.getItemCount();i++){
+                if (this.serialPortMenu.getItem(i).isSelected()){
+                    return this.serialPortMenu.getItem(i).getText();
+                }
+            }
+        }
+        return null;
     }
 
     /** This method is called from within the constructor to
@@ -42,68 +109,429 @@ public class kondoView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
         jSplitPane1 = new javax.swing.JSplitPane();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jScrollPane3 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        pinModePinIdText = new javax.swing.JTextField();
+        pinModeInputButton = new javax.swing.JButton();
+        pinModeOutputButton = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        digitalWritePinIdText = new javax.swing.JTextField();
+        digitalWriteOnButton = new javax.swing.JButton();
+        digitalWriteOffButton = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        digitalReadPinIdText = new javax.swing.JTextField();
+        digitalReadButton = new javax.swing.JButton();
+        analogReadButton = new javax.swing.JButton();
+        analogReadPinIdText = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        analogWritePinIdText = new javax.swing.JTextField();
+        analogWriteButton = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        analogWriteValueText = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        commandHistoryList = new javax.swing.JList();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        commandInputTextArea = new javax.swing.JTextArea();
+        jLabel14 = new javax.swing.JLabel();
+        commandRunButton = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jMenuBar1 = new javax.swing.JMenuBar();
+        serialOutputTextArea = new javax.swing.JTextArea();
+        jPanel3 = new javax.swing.JPanel();
+        statusLabel = new javax.swing.JLabel();
+        menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
+        serialPortMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+
+        jMenuBar1.setName("jMenuBar1"); // NOI18N
+
+        jMenu1.setText("File");
+        jMenu1.setName("jMenu1"); // NOI18N
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        jMenu2.setName("jMenu2"); // NOI18N
+        jMenuBar1.add(jMenu2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane1.setResizeWeight(0.5);
+        jSplitPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jSplitPane1.setName("jSplitPane1"); // NOI18N
 
         jTabbedPane1.setName("jTabbedPane1"); // NOI18N
 
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane3.setName("jScrollPane3"); // NOI18N
+
         jPanel1.setName("jPanel1"); // NOI18N
+
+        jLabel3.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
+        jLabel3.setText("pinMode");
+        jLabel3.setName("jLabel3"); // NOI18N
+
+        jLabel4.setText("pin = ");
+        jLabel4.setName("jLabel4"); // NOI18N
+
+        pinModePinIdText.setText("13");
+        pinModePinIdText.setName("pinModePinIdText"); // NOI18N
+
+        pinModeInputButton.setText("input");
+        pinModeInputButton.setName("pinModeInputButton"); // NOI18N
+        pinModeInputButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pinModeInputButtonActionPerformed(evt);
+            }
+        });
+
+        pinModeOutputButton.setText("output");
+        pinModeOutputButton.setName("pinModeOutputButton"); // NOI18N
+        pinModeOutputButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pinModeOutputButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
+        jLabel5.setText("digitalWrite");
+        jLabel5.setName("jLabel5"); // NOI18N
+
+        jLabel6.setText("pin = ");
+        jLabel6.setName("jLabel6"); // NOI18N
+
+        digitalWritePinIdText.setText("13");
+        digitalWritePinIdText.setName("digitalWritePinIdText"); // NOI18N
+
+        digitalWriteOnButton.setText("on");
+        digitalWriteOnButton.setName("digitalWriteOnButton"); // NOI18N
+        digitalWriteOnButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                digitalWriteOnButtonActionPerformed(evt);
+            }
+        });
+
+        digitalWriteOffButton.setText("off");
+        digitalWriteOffButton.setName("digitalWriteOffButton"); // NOI18N
+        digitalWriteOffButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                digitalWriteOffButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
+        jLabel7.setText("digitalRead");
+        jLabel7.setName("jLabel7"); // NOI18N
+
+        jLabel8.setText("pin = ");
+        jLabel8.setName("jLabel8"); // NOI18N
+
+        digitalReadPinIdText.setText("13");
+        digitalReadPinIdText.setName("digitalReadPinIdText"); // NOI18N
+
+        digitalReadButton.setText("read");
+        digitalReadButton.setName("digitalReadButton"); // NOI18N
+        digitalReadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                digitalReadButtonActionPerformed(evt);
+            }
+        });
+
+        analogReadButton.setText("read");
+        analogReadButton.setName("analogReadButton"); // NOI18N
+        analogReadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                analogReadButtonActionPerformed(evt);
+            }
+        });
+
+        analogReadPinIdText.setText("13");
+        analogReadPinIdText.setName("analogReadPinIdText"); // NOI18N
+
+        jLabel9.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
+        jLabel9.setText("analogRead");
+        jLabel9.setName("jLabel9"); // NOI18N
+
+        jLabel10.setText("pin = ");
+        jLabel10.setName("jLabel10"); // NOI18N
+
+        jLabel11.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
+        jLabel11.setText("analogWrite");
+        jLabel11.setName("jLabel11"); // NOI18N
+
+        analogWritePinIdText.setText("13");
+        analogWritePinIdText.setName("analogWritePinIdText"); // NOI18N
+
+        analogWriteButton.setText("write");
+        analogWriteButton.setName("analogWriteButton"); // NOI18N
+        analogWriteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                analogWriteButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel12.setText("pin = ");
+        jLabel12.setName("jLabel12"); // NOI18N
+
+        jLabel13.setText("value = ");
+        jLabel13.setName("jLabel13"); // NOI18N
+
+        analogWriteValueText.setText("1024");
+        analogWriteValueText.setName("analogWriteValueText"); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 396, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel9))
+                        .addGap(36, 36, 36)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(1, 1, 1)
+                                .addComponent(digitalWritePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(digitalWriteOnButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(digitalWriteOffButton))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(1, 1, 1)
+                                .addComponent(pinModePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pinModeInputButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pinModeOutputButton))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel12)
+                                .addGap(1, 1, 1)
+                                .addComponent(analogWritePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel13)
+                                .addGap(1, 1, 1)
+                                .addComponent(analogWriteValueText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(analogWriteButton))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel10)
+                                .addGap(1, 1, 1)
+                                .addComponent(analogReadPinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(analogReadButton))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(40, 40, 40)
+                        .addComponent(jLabel8)
+                        .addGap(1, 1, 1)
+                        .addComponent(digitalReadPinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(digitalReadButton)))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 78, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(pinModePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(pinModeInputButton)
+                            .addComponent(pinModeOutputButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(digitalWritePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(digitalWriteOnButton)
+                            .addComponent(digitalWriteOffButton)
+                            .addComponent(jLabel5))))
+                .addGap(12, 12, 12)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(digitalReadPinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(digitalReadButton)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(analogWritePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13)
+                    .addComponent(analogWriteValueText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(analogWriteButton)
+                    .addComponent(jLabel11))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(analogReadPinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(analogReadButton)
+                    .addComponent(jLabel9))
+                .addContainerGap(152, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Preset functions", jPanel1);
+        jScrollPane3.setViewportView(jPanel1);
+
+        jTabbedPane1.addTab("Preset functions", jScrollPane3);
 
         jPanel2.setName("jPanel2"); // NOI18N
+
+        jLabel1.setText("History:");
+        jLabel1.setName("jLabel1"); // NOI18N
+
+        jScrollPane2.setName("jScrollPane2"); // NOI18N
+
+        commandHistoryList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        commandHistoryList.setName("commandHistoryList"); // NOI18N
+        commandHistoryList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                commandHistoryListValueChanged(evt);
+            }
+        });
+        jScrollPane2.setViewportView(commandHistoryList);
+
+        jScrollPane4.setName("jScrollPane4"); // NOI18N
+
+        commandInputTextArea.setColumns(20);
+        commandInputTextArea.setRows(5);
+        commandInputTextArea.setName("commandInputTextArea"); // NOI18N
+        commandInputTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                commandInputTextAreaKeyPressed(evt);
+            }
+        });
+        jScrollPane4.setViewportView(commandInputTextArea);
+
+        jLabel14.setText("Command:");
+        jLabel14.setName("jLabel14"); // NOI18N
+
+        commandRunButton.setText("Run command (Ctrl+Enter)");
+        commandRunButton.setName("commandRunButton"); // NOI18N
+        commandRunButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                commandRunButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 396, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel14)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
+                                .addComponent(commandRunButton))
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 78, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(commandRunButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Command", jPanel2);
 
         jSplitPane1.setTopComponent(jTabbedPane1);
 
+        jPanel4.setName("jPanel4"); // NOI18N
+
+        jLabel2.setText("Serial output>");
+        jLabel2.setName("jLabel2"); // NOI18N
+
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jTextArea1.setName("jTextArea1"); // NOI18N
-        jScrollPane1.setViewportView(jTextArea1);
+        serialOutputTextArea.setColumns(20);
+        serialOutputTextArea.setRows(5);
+        serialOutputTextArea.setAutoscrolls(true);
+        serialOutputTextArea.setName("serialOutputTextArea"); // NOI18N
+        jScrollPane1.setViewportView(serialOutputTextArea);
 
-        jSplitPane1.setRightComponent(jScrollPane1);
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addContainerGap(362, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
+        );
 
-        jMenuBar1.setName("jMenuBar1"); // NOI18N
+        jSplitPane1.setRightComponent(jPanel4);
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jPanel3.setName("jPanel3"); // NOI18N
+
+        statusLabel.setText("jLabel15");
+        statusLabel.setName("statusLabel"); // NOI18N
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(statusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(statusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        menuBar.setName("menuBar"); // NOI18N
 
         fileMenu.setText("File");
         fileMenu.setName("fileMenu"); // NOI18N
@@ -111,9 +539,18 @@ public class kondoView extends javax.swing.JFrame {
         exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
         exitMenuItem.setText("Exit");
         exitMenuItem.setName("exitMenuItem"); // NOI18N
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(exitMenuItem);
 
-        jMenuBar1.add(fileMenu);
+        menuBar.add(fileMenu);
+
+        serialPortMenu.setText("Serial port");
+        serialPortMenu.setName("serialPortMenu"); // NOI18N
+        menuBar.add(serialPortMenu);
 
         helpMenu.setText("Help");
         helpMenu.setName("helpMenu"); // NOI18N
@@ -127,19 +564,23 @@ public class kondoView extends javax.swing.JFrame {
         });
         helpMenu.add(jMenuItem1);
 
-        jMenuBar1.add(helpMenu);
+        menuBar.add(helpMenu);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -149,6 +590,161 @@ public class kondoView extends javax.swing.JFrame {
         kondoAboutDialog dialog = new kondoAboutDialog(this, true);
         dialog.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        this.setVisible(false);
+        System.exit(0);
+    }//GEN-LAST:event_exitMenuItemActionPerformed
+
+    class CommandHistoryItem {
+        private String excerpt;
+        private int idx;
+        private String command;
+        public CommandHistoryItem(int idx, String command) {
+            if (command.length() > 8){
+                this.excerpt = command.substring(0, 5) + "...";
+            } else {
+                this.excerpt = command;
+            }
+            this.idx = idx;
+            this.command = command;
+        }
+
+        public String getCommand(){
+            return this.command;
+        }
+
+        @Override
+        public String toString(){
+            return Integer.toString(this.idx) + ": " + this.excerpt;
+        }
+
+    }
+    private void commandRunButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commandRunButtonActionPerformed
+        CommandHistoryItem item =
+                new CommandHistoryItem(pCommandHistoryListModel.getSize(),
+                this.commandInputTextArea.getText());
+        this.pCommandHistoryListModel.addElement(item);
+        this.commandHistoryList.setSelectedIndex(this.pCommandHistoryListModel.getSize() - 1);
+        this.commandHistoryList.ensureIndexIsVisible(this.commandHistoryList.getSelectedIndex());
+        this.commandInputTextArea.requestFocusInWindow();
+    }//GEN-LAST:event_commandRunButtonActionPerformed
+
+    private void commandHistoryListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_commandHistoryListValueChanged
+        int selected_idx = this.commandHistoryList.getSelectedIndex();
+        CommandHistoryItem item = (CommandHistoryItem)pCommandHistoryListModel.getElementAt(selected_idx);
+        this.commandInputTextArea.setText(item.getCommand());
+    }//GEN-LAST:event_commandHistoryListValueChanged
+
+    private void commandInputTextAreaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_commandInputTextAreaKeyPressed
+        int list_idx = this.commandHistoryList.getSelectedIndex();
+
+        switch (evt.getModifiers()) {
+            case KeyEvent.META_DOWN_MASK:
+            case KeyEvent.META_MASK:
+            case KeyEvent.ALT_DOWN_MASK:
+            case KeyEvent.ALT_MASK:
+                switch (evt.getKeyCode()){
+                    case KeyEvent.VK_P:
+                        if (this.pCommandHistoryListModel.getSize() > 0){
+                            if (list_idx > 0) {
+                                list_idx--;
+                            }
+                            this.commandHistoryList.setSelectedIndex(list_idx);
+                        }
+                        break;
+                    case KeyEvent.VK_N:
+                        if (this.pCommandHistoryListModel.getSize() > 0){
+                            if (list_idx < this.pCommandHistoryListModel.getSize() - 1){
+                                list_idx++;
+                            }
+                            this.commandHistoryList.setSelectedIndex(list_idx);
+                        }
+                        break;
+                }
+                break;
+            case KeyEvent.CTRL_DOWN_MASK:
+            case KeyEvent.CTRL_MASK:
+                switch(evt.getKeyCode()){
+                    case KeyEvent.VK_ENTER:
+                        runCommand(this.commandInputTextArea.getText());
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+        KeyEvent ev;
+        evt.getKeyCode();
+    }//GEN-LAST:event_commandInputTextAreaKeyPressed
+
+    private int readNum(JTextField textfield){
+        int ret;
+        try {
+            ret = new Integer(textfield.getText());
+            return ret;
+        } catch (NumberFormatException e){
+            this.statusLabel.setText(textfield.getText() + " is not a number.");
+            return -1;
+        }
+    }
+    private void runCommand(String command){
+        this.commandInputTextArea.setText(command);
+        ActionListener[] listeners = this.commandRunButton.getActionListeners();
+        for(ActionListener listener: listeners){
+            listener.actionPerformed(null);
+        }
+    }
+
+    private void pinModeInputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pinModeInputButtonActionPerformed
+        int pin = readNum(pinModePinIdText);
+        if (pin != -1){
+            runCommand("(pin-mode " + Integer.toString(pin) + " 0)");
+        }
+    }//GEN-LAST:event_pinModeInputButtonActionPerformed
+
+    private void pinModeOutputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pinModeOutputButtonActionPerformed
+        int pin = readNum(pinModePinIdText);
+        if (pin != -1){
+            runCommand("(pin-mode " + Integer.toString(pin) + " 1)");
+        }
+    }//GEN-LAST:event_pinModeOutputButtonActionPerformed
+
+    private void digitalWriteOnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_digitalWriteOnButtonActionPerformed
+        int pin = readNum(digitalWritePinIdText);
+        if (pin != -1){
+            runCommand("(digital-write " + pin + " 1)");
+        }
+    }//GEN-LAST:event_digitalWriteOnButtonActionPerformed
+
+    private void digitalWriteOffButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_digitalWriteOffButtonActionPerformed
+        int pin = readNum(digitalWritePinIdText);
+        if (pin != -1){
+            runCommand("(digital-write " + pin + " 0)");
+        }
+    }//GEN-LAST:event_digitalWriteOffButtonActionPerformed
+
+    private void digitalReadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_digitalReadButtonActionPerformed
+        int pin = readNum(digitalReadPinIdText);
+        if (pin != -1){
+            runCommand("(digital-read "+pin+")");
+        }
+    }//GEN-LAST:event_digitalReadButtonActionPerformed
+
+    private void analogWriteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_analogWriteButtonActionPerformed
+        int pin = readNum(analogWritePinIdText);
+        int value = readNum(analogWriteValueText);
+        if (pin != -1){
+            runCommand("(analog-write " + pin + " "+value+")");
+        }
+    }//GEN-LAST:event_analogWriteButtonActionPerformed
+
+    private void analogReadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_analogReadButtonActionPerformed
+        int pin = readNum(analogReadPinIdText);
+        if (pin != -1){
+            runCommand("(analog-read "+pin+")");
+        }
+    }//GEN-LAST:event_analogReadButtonActionPerformed
 
     /**
     * @param args the command line arguments
@@ -162,17 +758,57 @@ public class kondoView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton analogReadButton;
+    private javax.swing.JTextField analogReadPinIdText;
+    private javax.swing.JButton analogWriteButton;
+    private javax.swing.JTextField analogWritePinIdText;
+    private javax.swing.JTextField analogWriteValueText;
+    private javax.swing.JList commandHistoryList;
+    private javax.swing.JTextArea commandInputTextArea;
+    private javax.swing.JButton commandRunButton;
+    private javax.swing.JButton digitalReadButton;
+    private javax.swing.JTextField digitalReadPinIdText;
+    private javax.swing.JButton digitalWriteOffButton;
+    private javax.swing.JButton digitalWriteOnButton;
+    private javax.swing.JTextField digitalWritePinIdText;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JMenuBar menuBar;
+    private javax.swing.JButton pinModeInputButton;
+    private javax.swing.JButton pinModeOutputButton;
+    private javax.swing.JTextField pinModePinIdText;
+    private javax.swing.JTextArea serialOutputTextArea;
+    private javax.swing.JMenu serialPortMenu;
+    private javax.swing.JLabel statusLabel;
     // End of variables declaration//GEN-END:variables
 
 }
