@@ -2,14 +2,16 @@
 
 (ns kondolisp.serial
   (:use [clojure core]
-        [clojure.contrib str-utils java-utils pprint  seq-utils])
+        [clojure.contrib str-utils java-utils pprint seq-utils])
   (:import (gnu.io CommPort
                    CommPortIdentifier
                    SerialPort)
            (java.io FileDescriptor
                     IOException
                     InputStream
-                    OutputStream)))
+                    OutputStream)
+           (java.nio ByteBuffer)
+           (java.nio.channels Selector Channels)))
 
 (def *serial* (ref nil))
 (def *serial-config* (ref {:port-name "/dev/ttyUSB0",
@@ -33,6 +35,7 @@
                             SerialPort/DATABITS_8,
                             SerialPort/STOPBITS_1,
                             SerialPort/PARITY_NONE)
+      (.enableReceiveTimeout comm-port 1000)
       (dosync (ref-set *serial* comm-port)))))
 
 (defn close-serial []
@@ -47,8 +50,8 @@
       (let [in (.getInputStream serial),
             buf (make-array (. Byte TYPE) nbytes),
             len (.read in buf)]
-        (if (> len -1)
-          [(String. buf, 0, len) len]
+        (if (> len 0)
+          (String. buf, 0, len)
           nil)))))
 
 (defn read-until [& rest]
