@@ -184,14 +184,14 @@
    ;;
    (symbol? sym)	(recur (.toString sym))
    true
-   (throw (Exception. (str "cannot make sym from " sym)))))
+   (throw (RuntimeException. (str "cannot make sym from " sym)))))
 
 (defn make-num [x]
   (cond
    (and (integer? x) (>= x 0))	(bit-or (bit-shift-left x 1) 0x8001)
    ;; 
    (and (integer? x) (< x 0))	(bit-or (bit-shift-left x 1) 0xc001)
-   true		(throw (Exception. (str "cannot make num from " x)))))
+   true		(throw (RuntimeException. (str "cannot make num from " x)))))
 
 (defn decode-num [x]
   (bit-or
@@ -466,7 +466,7 @@
 	  _	(compile-funcall (first exp) (rest exp)))
    ;;
    true
-   (throw (Exception. (str "Compile error: " exp)))
+   (throw (RuntimeException. (str "Compile error: " exp)))
    ))
 
 (defn compile-compact [program]
