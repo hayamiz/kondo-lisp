@@ -38,6 +38,9 @@
       (.enableReceiveTimeout comm-port 1000)
       (dosync (ref-set *serial* comm-port)))))
 
+(defn serial-opened? []
+  (not (nil? @*serial*)))
+
 (defn close-serial []
   (let [serial @*serial*]
     (when serial
@@ -53,6 +56,17 @@
         (if (> len 0)
           (String. buf, 0, len)
           nil)))))
+
+(defn get-serial-ports []
+  (let [enum (CommPortIdentifier/getPortIdentifiers),
+        ports (take-while #(not (nil? %))
+                          (iterate (fn [_] (.nextElement enum))
+                                   (.nextElement enum))),
+        serial-ports (filter (fn [port-ident]
+                               (= (.getPortType port-ident)
+                                  CommPortIdentifier/PORT_SERIAL))
+                             ports)]
+    (map #(.getName %) ports)))
 
 (defn to-byte-array [coll]
   (let [bytes (map byte coll)
