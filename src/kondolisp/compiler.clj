@@ -382,10 +382,9 @@
         (compile-resolve-labels
          (compile-compact
           (compile-pass1 exp)))]
-  (assemble
-   (pp-program
-    `(~@vm-inst-program
-      (:VM_EXIT))))))
+    (assemble
+     `(~@vm-inst-program
+       (:VM_EXIT)))))
 
 (defn compile-pass1 [exp]
   (cond
