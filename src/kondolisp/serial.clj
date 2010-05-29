@@ -54,32 +54,6 @@
           (String. buf, 0, len)
           nil)))))
 
-(defn read-until [& rest]
-  (let [serial @*serial*,
-        term-byte (if (nil? rest)
-                    (byte 0)
-                    (byte (first rest)))]
-    (when serial
-      (let [in (.getInputStream serial)
-            ret (StringBuffer.)
-            buf (make-array (. Byte TYPE) 1024)]
-        (dorun
-         (take-while
-          #(not (nil? %))
-          (iterate
-           (fn [accum-len]
-             (let [len (.read in buf)]
-               (cond
-                (= len -1)	nil
-                (= len 0)	accum-len
-                true		(if (.equals term-byte (aget buf (- len 1)))
-                                  (do (.append ret (String. buf, 0, (- len 1)))
-                                      nil)
-                                  (do (.append ret (String. buf, 0, len))
-                                      (+ accum-len len))))))
-           0)))
-        (.toString ret)))))
-
 (defn to-byte-array [coll]
   (let [bytes (map byte coll)
         ret (make-array (. Byte TYPE) (count coll))]
