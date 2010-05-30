@@ -20,7 +20,7 @@
 
 (defn set-serial-config [config]
   (dosync
-   (ref-set *serial-config* (merge config *serial-config*))))
+   (ref-set *serial-config* (merge config @*serial-config*))))
 
 (defn open-serial []
   (let [serial-config @*serial-config*,
