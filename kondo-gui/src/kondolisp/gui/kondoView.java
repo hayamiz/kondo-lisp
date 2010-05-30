@@ -12,6 +12,7 @@
 package kondolisp.gui;
 
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -62,10 +63,13 @@ public class kondoView extends javax.swing.JFrame {
     }
 
     public void setSerialPortMenu(String[] portNames){
-        this.setSerialPortMenu(portNames, null);
+        this.setSerialPortMenu(portNames, -1, null);
     }
-    public void setSerialPortMenu(String[] portNames,
-            ActionListener listener){
+    public void setSerialPortMenu(String[] portNames, int selected_idx){
+        this.setSerialPortMenu(portNames, -1, null);
+    }
+    public void setSerialPortMenu(String[] portNames, int selected_idx,
+                                    ItemListener listener){
         this.serialPortMenu.removeAll();
         if (portNames.length > 0){
             ButtonGroup group = new ButtonGroup();
@@ -73,13 +77,15 @@ public class kondoView extends javax.swing.JFrame {
                     new JRadioButtonMenuItem[portNames.length];
             for(int i = 0;i < portNames.length;i++){
                 menu_items[i] = new JRadioButtonMenuItem(portNames[i]);
-                if (listener == null){
-                    menu_items[i].addActionListener(listener);
+                if (listener != null){
+                    menu_items[i].addItemListener(listener);
                 }
                 this.serialPortMenu.add(menu_items[i]);
                 group.add(menu_items[i]);
             }
-            group.setSelected(menu_items[0].getModel(), true);
+            if(selected_idx >= 0 && selected_idx <= portNames.length - 1){
+                group.setSelected(menu_items[selected_idx].getModel(), true);
+            }
             this.gSerialPortGroup = group;
         } else {
             JMenuItem item = new JMenuItem();

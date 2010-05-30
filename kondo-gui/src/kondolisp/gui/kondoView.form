@@ -278,7 +278,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="jLabel3">
                       <Properties>
-                        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="TakaoPGothic" size="12" style="1"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="pinMode"/>
@@ -317,7 +317,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel5">
                       <Properties>
-                        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="TakaoPGothic" size="12" style="1"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="digitalWrite"/>
@@ -356,7 +356,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel7">
                       <Properties>
-                        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="TakaoPGothic" size="12" style="1"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="digitalRead"/>
@@ -401,7 +401,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel9">
                       <Properties>
-                        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="TakaoPGothic" size="12" style="1"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="analogRead"/>
@@ -416,7 +416,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel11">
                       <Properties>
-                        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="TakaoPGothic" size="12" style="1"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="analogWrite"/>

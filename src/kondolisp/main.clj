@@ -2,15 +2,16 @@
   (:gen-class)
   (:use [clojure core]
 	[clojure.contrib pprint command-line java-utils]
-	[clj-match])
-  (:require [kondolisp compiler serial]
+	[clj-match]
+	[kondolisp  serial])
+  (:require [kondolisp compiler]
 	    [clojure.contrib str-utils2])
   (:import (sun.misc Signal SignalHandler)
-	   (java.awt.event ActionListener WindowListener)
+	   (java.awt.event ActionListener WindowListener ItemListener ItemEvent)
 	   (java.util.concurrent LinkedBlockingQueue
 				 TimeUnit CyclicBarrier)
 	   (java.nio.channels Selector)
-	   (javax.swing UIManager)))
+	   (javax.swing UIManager JOptionPane)))
 
 (defn- sys-println [arg]
   (.println System/out arg))
@@ -23,7 +24,7 @@
    #"(\w+\.)+(\w+)?Exception:[ \t]*" ""))
 
 (defn kondo-repl []
-  (kondolisp.serial/open-serial)
+  (open-serial)
   (let [output-queue (LinkedBlockingQueue. ),
 	serial-output-thread
 	(Thread.
@@ -31,7 +32,7 @@
 	   (try
 	    (while (not (.isInterrupted (Thread/currentThread)))
 		   (let [serial-output
-			 (kondolisp.serial/read-serial 1024)]
+			 (read-serial 1024)]
 		     (if (not (nil? serial-output))
 		       (.put output-queue serial-output))))
 	    (catch InterruptedException e
@@ -64,7 +65,7 @@
 		  :help		(throw (RuntimeException. "quit"))
 		  _
 		  (let [byteseq (kondolisp.compiler/kondo-compile user-input)]
-		    (kondolisp.serial/write-serial
+		    (write-serial
 		     (concat byteseq [0 0 0 0]))
 		    (printer)
 		    (Thread/sleep 50))))))
@@ -76,18 +77,34 @@
 	 _		(throw e)))
      (finally
       (.interrupt serial-output-thread)
-      (kondolisp.serial/close-serial)
+      (close-serial)
       ))))
 
 (defn set-status [view str]
   (.setText (.. view gStatusLabel) str))
 
 (defn kondo-setup-view [view]
-  (let [serial-ports (kondolisp.serial/get-serial-ports)]
+  (let [serial-ports (get-serial-ports)]
     (if (> (count serial-ports) 0)
       (.setSerialPortMenu
        view
-       (into-array (kondolisp.serial/get-serial-ports)))))
+       (into-array (get-serial-ports))
+       0
+       (proxy [ItemListener] []
+	 (itemStateChanged
+	  [evt]
+	  (when (= ItemEvent/SELECTED (.getStateChange evt))
+	    (let [selected-port (.. evt getItemSelectable getText)]
+	      (sys-println (str selected-port))
+	      (when (not (and (serial-opened?)
+			      (= selected-port
+				 (opened-port-name))))
+		(close-serial)
+		(set-serial-config
+		 {:port-name selected-port})
+		(open-serial)
+		(set-status view
+			    (str "Serial port " selected-port " opened"))))))))))
   (.addActionListener
    (.gCommandRunButton view)
    (proxy [ActionListener] []
@@ -111,7 +128,7 @@
 				  (let [cmd (read),
 					byteseq
 					(kondolisp.compiler/kondo-compile cmd)]
-				    (kondolisp.serial/write-serial
+				    (write-serial
 				     (concat byteseq [0 0 0 0])))))
 			 (catch clojure.lang.LispReader$ReaderException e
 			   (match (except-simple-msg e)
@@ -134,8 +151,8 @@
 	(Thread.
 	 (fn []
 	   (while (not (.isInterrupted (Thread/currentThread)))
-		  (if (kondolisp.serial/serial-opened?)
-		    (let [serial-output (kondolisp.serial/read-serial 1024),
+		  (if (serial-opened?)
+		    (let [serial-output (read-serial 1024),
 			  text-area (.. view gSerialOutputTextArea)]
 		      (.append text-area serial-output)
 		      (.setCaretPosition text-area (.. text-area getDocument getLength)))
@@ -148,7 +165,7 @@
 			nil)
        (windowClosed [evt]
 		     (.interrupt serial-printer)
-		     (kondolisp.serial/close-serial))
+		     (close-serial))
        (windowClosing [evt]
 		      nil)
        (windowDeactivated [evt]
@@ -167,13 +184,13 @@
    (catch Exception _ ))
   (let [view (kondolisp.gui.kondoView.)]
     (try
-     (kondolisp.serial/open-serial)
      (kondo-setup-view view)
      (.setVisible view true)
      (catch Exception e
        (sys-println (str e))
        (sys-println (.getMessage e))
-       (sys-println (str (.getStackTrace e))))
+       (dorun (map (fn [st] (sys-println (str st)))
+		   (seq (.getStackTrace e)))))
      (finally
       )))
   )

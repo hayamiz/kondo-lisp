@@ -41,6 +41,11 @@
 (defn serial-opened? []
   (not (nil? @*serial*)))
 
+(defn opened-port-name []
+  (if (serial-opened?)
+    (.getName @*serial*)
+    nil))
+
 (defn close-serial []
   (let [serial @*serial*]
     (when serial
