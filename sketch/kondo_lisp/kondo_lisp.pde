@@ -526,13 +526,22 @@ extern "C"
                 lispval_t rest)
     {
         lispval_t ret = Vnil;
+        int int_a1, int_a2, int_a3;
+        if (IS_NUM(a1)) int_a1 = EN2N(a1);
+        if (IS_NUM(a2)) int_a2 = EN2N(a2);
+        if (IS_NUM(a3)) int_a3 = EN2N(a3);
+        
         switch(fname){
         case Fprint_char:
             assert(nargs > 0);
-#define PRINT_CHAR(c) { if (EN2N(c) != 0) {Serial.print(EN2N(c), BYTE);}}
-            PRINT_CHAR(a1);
-            if (nargs >= 2) PRINT_CHAR(a2);
-            if (nargs >= 3) PRINT_CHAR(a3);
+#define PRINT_CHAR(c) { if (c != 0) {Serial.print(c, BYTE);}}
+            PRINT_CHAR(int_a1);
+            if (nargs >= 2) PRINT_CHAR(int_a2);
+            if (nargs >= 3) PRINT_CHAR(int_a3);
+            while(!IS_NIL(rest)){
+                PRINT_CHAR(EN2N(CAR(rest)));
+                rest = CDR(rest);
+            }
             break;
         case Fwrite:
             assert(nargs == 1);
@@ -540,10 +549,10 @@ extern "C"
             break;
         case Fplus:
         {
-            int tmp = EN2N(a1);
+            int tmp = int_a1;
             assert(nargs > 0);
-            if (nargs > 1) tmp += EN2N(a2);
-            if (nargs > 2) tmp += EN2N(a3);
+            if (nargs > 1) tmp += int_a2;
+            if (nargs > 2) tmp += int_a3;
             if (nargs > 3){
                 while(!IS_NIL(rest)){
                     tmp += EN2N(CAR(rest));
@@ -557,11 +566,11 @@ extern "C"
             int tmp;
             assert(nargs > 0);
             if (nargs == 1){
-                tmp = EN2N(a1) * -1;
+                tmp = int_a1 * -1;
             } else {
-                tmp = EN2N(a1);
-                if (nargs > 1) tmp -= EN2N(a2);
-                if (nargs > 2) tmp -= EN2N(a3);
+                tmp = int_a1;
+                if (nargs > 1) tmp -= int_a2;
+                if (nargs > 2) tmp -= int_a3;
                 if (nargs > 3){
                     while(!IS_NIL(rest)){
                         tmp -= EN2N(CAR(rest));
@@ -573,10 +582,10 @@ extern "C"
             break;
         case Ftimes:
         {
-            int tmp = EN2N(a1);
+            int tmp = int_a1;
             assert(nargs > 0);
-            if (nargs > 1) tmp *= EN2N(a2);
-            if (nargs > 2) tmp *= EN2N(a3);
+            if (nargs > 1) tmp *= int_a2;
+            if (nargs > 2) tmp *= int_a3;
             if (nargs > 3){
                 while(!IS_NIL(rest)){
                     tmp *= EN2N(CAR(rest));
@@ -588,10 +597,10 @@ extern "C"
             break;
         case Fdivide:
         {
-            int tmp = EN2N(a1);
+            int tmp = int_a1;
             assert(nargs > 0);
-            if (nargs > 1) tmp /= EN2N(a2);
-            if (nargs > 2) tmp /= EN2N(a3);
+            if (nargs > 1) tmp /= int_a2;
+            if (nargs > 2) tmp /= int_a3;
             if (nargs > 3){
                 while(!IS_NIL(rest)){
                     tmp /= EN2N(CAR(rest));
@@ -603,7 +612,7 @@ extern "C"
         break;
         case Fremainder:
             assert(nargs == 2);
-            ret = make_num(EN2N(a1) % EN2N(a2));
+            ret = make_num(int_a1 % int_a2);
             break;
         case Feq:
             assert(nargs == 2);
@@ -618,6 +627,7 @@ extern "C"
             HALT("EQUAL not implemented");
             break;
         case Fdebug_mode:
+#ifdef DEBUG
             if (nargs > 0) {
                 if (!IS_NIL(a1)){
                     debug_mode = true;
@@ -627,34 +637,35 @@ extern "C"
             } else {
                 debug_mode = !debug_mode;
             }
+#endif
             break;
         case Fpin_mode:
             assert(nargs == 2);
             Serial.print("pinmode: ");
-            Serial.print(EN2N(a1), DEC);
-            if (EN2N(a2) == 0){
-                pinMode(EN2N(a1), INPUT);
+            Serial.print(int_a1, DEC);
+            if (int_a2 == 0){
+                pinMode(int_a1, INPUT);
                 Serial.println(" input");
             } else {
-                pinMode(EN2N(a1), OUTPUT);
+                pinMode(int_a1, OUTPUT);
                 Serial.println(" output");
             }
             break;
         case Fdelay:
             assert(nargs == 1);
-            delay(EN2N(a1));
+            delay(int_a1);
             break;
         case Fdigital_write:
             assert(nargs == 2);
-            digitalWrite(EN2N(a1), (EN2N(a2) == 0 ? LOW : HIGH));
+            digitalWrite(int_a1, (int_a2 == 0 ? LOW : HIGH));
             break;
         case Fdigital_read:
             assert(nargs == 1);
-            ret = make_num(digitalRead(EN2N(a1)) == HIGH ? 1 : 0);
+            ret = make_num(digitalRead(int_a1) == HIGH ? 1 : 0);
             break;
         case Fanalog_reference:
             assert(nargs == 1);
-            switch(EN2N(a1)){
+            switch(int_a1){
             case 0:
                 analogReference(DEFAULT);
                 break;
@@ -668,12 +679,39 @@ extern "C"
             break;
         case Fanalog_read:
             assert(nargs == 1);
-            ret = make_num(analogRead(EN2N(a1)));
+            ret = make_num(analogRead(int_a1));
             break;
         case Fanalog_write:
             assert(nargs == 2);
-            analogWrite(EN2N(a1), EN2N(a2));
+            analogWrite(int_a1, int_a2);
             break;
+        case Ftone:
+            assert(nargs == 2 || nargs == 3);
+            if(nargs == 2){
+                tone(int_a1, int_a2);
+            } else if (nargs == 3){
+                tone(int_a1, int_a2, int_a3);
+            }
+            break;
+        case Fno_tone:
+            assert(nargs == 1);
+            noTone(int_a1);
+            break;
+        case Fshift_out:
+            assert(nargs == 4);
+            shiftOut(int_a1, int_a2, int_a3, EN2N(CAR(rest)));
+            break;
+        case Fpulse_in:
+            assert(nargs == 2 || nargs == 3);
+            if (nargs == 2){
+                pulseIn(int_a1, int_a2);
+            } else if (nargs == 3) {
+                pulseIn(int_a1, int_a2, int_a3);
+            }
+            break;
+        default:
+            Serial.print("fun not impled: ");
+            Serial.println(fname, DEC);
         }
         return ret;
     }
