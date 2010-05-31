@@ -30,9 +30,9 @@ public class LispTextPaneWrapper {
     private static InputMap normal_map = null;
     private static InputMap ctrl_x_map = null;
 
-    private LispTextPaneWrapper(){
-
+    private LispTextPaneWrapper() {
     }
+
     public static void setup(JTextPane text_pane) {
         prepareKeyBindings();
         LispTextPaneWrapper wrapper = new LispTextPaneWrapper();
@@ -47,6 +47,7 @@ public class LispTextPaneWrapper {
     }
 
     private class LispCaretListener extends LispMarker implements CaretListener {
+
         private JTextPane text_pane;
 
         public LispCaretListener(JTextPane text_pane) {
@@ -59,7 +60,9 @@ public class LispTextPaneWrapper {
     }
 
     private class LispDocumentListener extends LispMarker implements DocumentListener {
+
         private JTextPane text_pane;
+
         public LispDocumentListener(JTextPane text_pane) {
             this.text_pane = text_pane;
         }
@@ -75,12 +78,13 @@ public class LispTextPaneWrapper {
         public void changedUpdate(DocumentEvent e) {
             return;
         }
-
     }
 
     private abstract class LispMarker {
-        protected  void invokeUpdateMarker(final JTextPane text_pane) {
+
+        protected void invokeUpdateMarker(final JTextPane text_pane) {
             SwingUtilities.invokeLater(new Runnable() {
+
                 public void run() {
                     updateMarker(text_pane);
                 }
@@ -139,7 +143,6 @@ public class LispTextPaneWrapper {
         }
 
         private void markParen(JTextPane text_pane, int open_pos, int close_pos) {
-            System.out.println(open_pos + "," + close_pos);
             SimpleAttributeSet attr = new SimpleAttributeSet();
             StyleConstants.setBackground(attr, Color.yellow);
             StyledDocument doc = (StyledDocument) text_pane.getDocument();

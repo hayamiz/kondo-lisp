@@ -25,6 +25,10 @@
         </Menu>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.ButtonGroup" name="pinModeGroup">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="digitalWriteGroup">
+    </Component>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <Properties>
         <Property name="name" type="java.lang.String" value="menuBar" noResource="true"/>
@@ -99,7 +103,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="jPanel3" alignment="0" max="32767" attributes="0"/>
-          <Component id="jSplitPane1" alignment="0" pref="490" max="32767" attributes="0"/>
+          <Component id="jSplitPane1" alignment="0" pref="466" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -155,7 +159,7 @@
                 <Container class="javax.swing.JPanel" name="presetFunctiosPanel">
                   <Properties>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[450, 0]"/>
+                      <Dimension value="[0, 0]"/>
                     </Property>
                     <Property name="name" type="java.lang.String" value="presetFunctiosPanel" noResource="true"/>
                   </Properties>
@@ -165,102 +169,113 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel21" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="333" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace pref="17" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
-                                      <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                      <Component id="digitalReadPinIdText" min="-2" pref="32" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="digitalReadButton" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <Component id="jLabel21" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace min="-2" pref="345" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Component id="noToneButton" max="32767" attributes="1"/>
+                                                  <Component id="toneButton" max="32767" attributes="1"/>
+                                                  <Component id="analogReadButton" max="32767" attributes="1"/>
+                                                  <Component id="analogWriteButton" max="32767" attributes="1"/>
+                                                  <Component id="digitalReadButton" alignment="1" max="32767" attributes="1"/>
+                                                  <Component id="pinModeButton" alignment="0" pref="86" max="32767" attributes="1"/>
+                                                  <Component id="digitalWriteButton" alignment="0" max="32767" attributes="1"/>
+                                              </Group>
+                                              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                                      <Component id="pinModePinIdText" min="-2" pref="32" max="-2" attributes="0"/>
+                                                      <EmptySpace max="-2" attributes="0"/>
+                                                      <Component id="pinModeInputButton" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace max="-2" attributes="0"/>
+                                                      <Component id="pinModeOutputButton" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                                      <Component id="analogWritePinIdText" min="-2" pref="32" max="-2" attributes="0"/>
+                                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                                      <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                                      <Component id="analogWriteValueText" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <Group type="103" groupAlignment="1" attributes="0">
+                                                          <Group type="102" alignment="1" attributes="0">
+                                                              <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                                              <Component id="digitalReadPinIdText" min="-2" pref="32" max="-2" attributes="0"/>
+                                                          </Group>
+                                                          <Group type="102" alignment="1" attributes="0">
+                                                              <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                                              <Component id="digitalWritePinIdText" min="-2" pref="32" max="-2" attributes="0"/>
+                                                          </Group>
+                                                      </Group>
+                                                      <EmptySpace max="-2" attributes="0"/>
+                                                      <Component id="digitalWriteOnButton" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace max="-2" attributes="0"/>
+                                                      <Component id="digitalWriteOffButton" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <Group type="103" groupAlignment="1" attributes="0">
+                                                          <Group type="102" alignment="1" attributes="0">
+                                                              <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                                              <Component id="analogReadPinIdText" min="-2" pref="32" max="-2" attributes="0"/>
+                                                          </Group>
+                                                          <Group type="102" alignment="1" attributes="0">
+                                                              <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                                              <Component id="tonePinIdText" min="-2" pref="32" max="-2" attributes="0"/>
+                                                          </Group>
+                                                          <Group type="102" alignment="1" attributes="0">
+                                                              <Component id="jLabel19" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                                              <Component id="noTonePinIdText" min="-2" pref="32" max="-2" attributes="0"/>
+                                                          </Group>
+                                                          <Group type="102" alignment="1" attributes="0">
+                                                              <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                                              <Component id="example1PinIdText" min="-2" pref="32" max="-2" attributes="0"/>
+                                                          </Group>
+                                                      </Group>
+                                                      <Group type="103" groupAlignment="0" attributes="0">
+                                                          <Group type="102" attributes="0">
+                                                              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                                              <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                                              <Component id="toneFreqText" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+                                                              <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                                                              <Component id="toneDurationText" min="-2" pref="54" max="-2" attributes="0"/>
+                                                          </Group>
+                                                          <Group type="102" alignment="0" attributes="0">
+                                                              <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                                                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                                                          </Group>
+                                                      </Group>
+                                                  </Group>
+                                              </Group>
+                                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="jLabel22" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel15" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel20" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="jLabel19" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                              <Component id="noTonePinIdText" min="-2" pref="32" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="noToneButton" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                              <Component id="digitalWritePinIdText" min="-2" pref="32" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="digitalWriteOnButton" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="digitalWriteOffButton" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                              <Component id="pinModePinIdText" min="-2" pref="32" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="pinModeInputButton" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="pinModeOutputButton" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                              <Component id="analogWritePinIdText" min="-2" pref="32" max="-2" attributes="0"/>
-                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                              <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                              <Component id="analogWriteValueText" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="analogWriteButton" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Group type="102" alignment="0" attributes="0">
-                                                      <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                                      <Component id="analogReadPinIdText" min="-2" pref="32" max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <Group type="102" alignment="0" attributes="0">
-                                                      <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                                      <Component id="tonePinIdText" min="-2" pref="32" max="-2" attributes="0"/>
-                                                  </Group>
-                                              </Group>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Group type="102" alignment="0" attributes="0">
-                                                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                                                      <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                                      <Component id="toneFreqText" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                                                      <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                                                      <Component id="toneDurationText" min="-2" pref="54" max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <Component id="analogReadButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              </Group>
-                                          </Group>
-                                      </Group>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="toneButton" min="-2" max="-2" attributes="0"/>
+                                      <Component id="example1Button" pref="86" max="32767" attributes="1"/>
+                                      <EmptySpace min="-2" pref="377" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -271,76 +286,71 @@
                               <Component id="jLabel21" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="pinModeButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="pinModePinIdText" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="pinModeInputButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="pinModeOutputButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="digitalWriteButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="digitalWritePinIdText" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="digitalWriteOnButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="digitalWriteOffButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="digitalReadButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="digitalReadPinIdText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="digitalReadButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="analogWriteButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="analogWritePinIdText" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="analogWriteValueText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="analogWriteButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="analogReadButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="analogReadPinIdText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="analogReadButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="toneButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="tonePinIdText" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel16" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="toneFreqText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel15" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel18" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="toneDurationText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="toneButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel20" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="noToneButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel19" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="noTonePinIdText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="noToneButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="101" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                              <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="example1Button" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="example1PinIdText" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace pref="47" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
                   </Layout>
                   <SubComponents>
-                    <Component class="javax.swing.JLabel" name="jLabel3">
-                      <Properties>
-                        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="TakaoPGothic" size="12" style="1"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="pinMode"/>
-                        <Property name="name" type="java.lang.String" value="jLabel3" noResource="true"/>
-                      </Properties>
-                    </Component>
                     <Component class="javax.swing.JLabel" name="jLabel4">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="pin = "/>
@@ -353,33 +363,6 @@
                         <Property name="name" type="java.lang.String" value="pinModePinIdText" noResource="true"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="pinModeInputButton">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="input"/>
-                        <Property name="name" type="java.lang.String" value="pinModeInputButton" noResource="true"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pinModeInputButtonActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="pinModeOutputButton">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="output"/>
-                        <Property name="name" type="java.lang.String" value="pinModeOutputButton" noResource="true"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pinModeOutputButtonActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="jLabel5">
-                      <Properties>
-                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="TakaoPGothic" size="12" style="1"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="digitalWrite"/>
-                        <Property name="name" type="java.lang.String" value="jLabel5" noResource="true"/>
-                      </Properties>
-                    </Component>
                     <Component class="javax.swing.JLabel" name="jLabel6">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="pin = "/>
@@ -390,33 +373,6 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="13"/>
                         <Property name="name" type="java.lang.String" value="digitalWritePinIdText" noResource="true"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="digitalWriteOnButton">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="on"/>
-                        <Property name="name" type="java.lang.String" value="digitalWriteOnButton" noResource="true"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="digitalWriteOnButtonActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="digitalWriteOffButton">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="off"/>
-                        <Property name="name" type="java.lang.String" value="digitalWriteOffButton" noResource="true"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="digitalWriteOffButtonActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="jLabel7">
-                      <Properties>
-                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="TakaoPGothic" size="12" style="1"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="digitalRead"/>
-                        <Property name="name" type="java.lang.String" value="jLabel7" noResource="true"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel8">
@@ -433,7 +389,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="digitalReadButton">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="read"/>
+                        <Property name="text" type="java.lang.String" value="digitalRead"/>
                         <Property name="name" type="java.lang.String" value="digitalReadButton" noResource="true"/>
                       </Properties>
                       <Events>
@@ -442,7 +398,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="analogReadButton">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="read"/>
+                        <Property name="text" type="java.lang.String" value="analogRead"/>
                         <Property name="name" type="java.lang.String" value="analogReadButton" noResource="true"/>
                       </Properties>
                       <Events>
@@ -455,28 +411,10 @@
                         <Property name="name" type="java.lang.String" value="analogReadPinIdText" noResource="true"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="jLabel9">
-                      <Properties>
-                        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="TakaoPGothic" size="12" style="1"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="analogRead"/>
-                        <Property name="name" type="java.lang.String" value="jLabel9" noResource="true"/>
-                      </Properties>
-                    </Component>
                     <Component class="javax.swing.JLabel" name="jLabel10">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="pin = "/>
                         <Property name="name" type="java.lang.String" value="jLabel10" noResource="true"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="jLabel11">
-                      <Properties>
-                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="TakaoPGothic" size="12" style="1"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="analogWrite"/>
-                        <Property name="name" type="java.lang.String" value="jLabel11" noResource="true"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="analogWritePinIdText">
@@ -487,7 +425,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="analogWriteButton">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="write"/>
+                        <Property name="text" type="java.lang.String" value="analogWrite"/>
                         <Property name="name" type="java.lang.String" value="analogWriteButton" noResource="true"/>
                       </Properties>
                       <Events>
@@ -510,15 +448,6 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="1023"/>
                         <Property name="name" type="java.lang.String" value="analogWriteValueText" noResource="true"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="jLabel15">
-                      <Properties>
-                        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="TakaoPGothic" size="12" style="1"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="tone"/>
-                        <Property name="name" type="java.lang.String" value="jLabel15" noResource="true"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="tonePinIdText">
@@ -582,21 +511,12 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="noToneButton">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="tone"/>
+                        <Property name="text" type="java.lang.String" value="noTone"/>
                         <Property name="name" type="java.lang.String" value="noToneButton" noResource="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="noToneButtonActionPerformed"/>
                       </Events>
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="jLabel20">
-                      <Properties>
-                        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="TakaoPGothic" size="12" style="1"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="noTone"/>
-                        <Property name="name" type="java.lang.String" value="jLabel20" noResource="true"/>
-                      </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel21">
                       <Properties>
@@ -605,6 +525,98 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;u&gt;Basic functions:&lt;/u&gt;&lt;/html&gt;"/>
                         <Property name="name" type="java.lang.String" value="jLabel21" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="pinModeButton">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="pinMode"/>
+                        <Property name="name" type="java.lang.String" value="pinModeButton" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pinModeButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JRadioButton" name="pinModeInputButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="pinModeGroup"/>
+                        </Property>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="input"/>
+                        <Property name="name" type="java.lang.String" value="pinModeInputButton" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JRadioButton" name="pinModeOutputButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="pinModeGroup"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="output"/>
+                        <Property name="name" type="java.lang.String" value="pinModeOutputButton" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="digitalWriteButton">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="digitalWrite"/>
+                        <Property name="name" type="java.lang.String" value="digitalWriteButton" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="digitalWriteButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JRadioButton" name="digitalWriteOnButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="digitalWriteGroup"/>
+                        </Property>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="on"/>
+                        <Property name="name" type="java.lang.String" value="digitalWriteOnButton" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JRadioButton" name="digitalWriteOffButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="digitalWriteGroup"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="off"/>
+                        <Property name="name" type="java.lang.String" value="digitalWriteOffButton" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel22">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="TakaoPGothic" size="14" style="1"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;u&gt;Examples:&lt;/u&gt;&lt;/html&gt;"/>
+                        <Property name="name" type="java.lang.String" value="jLabel22" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="example1Button">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Blink LED"/>
+                        <Property name="name" type="java.lang.String" value="example1Button" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="example1ButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel5">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="pin = "/>
+                        <Property name="name" type="java.lang.String" value="jLabel5" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="example1PinIdText">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="13"/>
+                        <Property name="name" type="java.lang.String" value="example1PinIdText" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;note:&lt;/b&gt; use a pin for digital output&lt;/html&gt;"/>
+                        <Property name="name" type="java.lang.String" value="jLabel3" noResource="true"/>
                       </Properties>
                     </Component>
                   </SubComponents>
@@ -640,10 +652,10 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" attributes="0">
                                           <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace pref="159" max="32767" attributes="0"/>
+                                          <EmptySpace pref="135" max="32767" attributes="0"/>
                                           <Component id="commandRunButton" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="jScrollPane4" pref="380" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane4" pref="356" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -732,7 +744,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JTextPane" name="commandInputTextArea">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" noResource="true" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="ff" green="ff" id="TextPane.background" palette="3" red="ff" type="palette"/>
                         </Property>
                         <Property name="name" type="java.lang.String" value="commandInputTextArea" noResource="true"/>
@@ -759,9 +771,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="412" max="32767" attributes="0"/>
+                      <EmptySpace pref="388" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane1" alignment="0" pref="490" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="466" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -821,7 +833,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusLabel" min="-2" pref="414" max="-2" attributes="0"/>
-                  <EmptySpace pref="62" max="32767" attributes="0"/>
+                  <EmptySpace pref="38" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
