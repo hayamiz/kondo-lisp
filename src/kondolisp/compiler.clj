@@ -93,6 +93,10 @@
        (analog-reference "analog_reference")
        (analog-read "analog_read")
        (analog-write "analog_write")
+       (tone "tone")
+       (no-tone "no_tone")
+       (shift-out "shift_out")
+       (pulse-in "pulse_in")
        ])
 
 (defn generate-builtin-header []
