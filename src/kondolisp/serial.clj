@@ -14,13 +14,13 @@
            (java.nio.channels Selector Channels)))
 
 (def *serial* (ref nil))
-(def *serial-config* (ref {:port-name "/dev/ttyUSB0",
+(def *serial-config* (ref {:port-name nil,
                            :baud-rate 9600,
                            :app-name "kondolisp"}))
 
 (defn set-serial-config [config]
   (dosync
-   (ref-set *serial-config* (merge config @*serial-config*))))
+   (ref-set *serial-config* (merge @*serial-config* config))))
 
 (defn open-serial []
   (let [serial-config @*serial-config*,
@@ -40,6 +40,9 @@
 
 (defn serial-opened? []
   (not (nil? @*serial*)))
+
+(defn serial-config [key]
+  (key @*serial-config*))
 
 (defn opened-port-name []
   (if (serial-opened?)
