@@ -11,9 +11,10 @@
 
 package kondolisp.gui;
 
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.JRadioButtonMenuItem;
@@ -21,6 +22,7 @@ import javax.swing.JMenuItem;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 
 /**
  *
@@ -29,7 +31,7 @@ import javax.swing.JTextField;
 public class kondoView extends javax.swing.JFrame {
 
     public javax.swing.JMenuBar gMenuBar;
-    public javax.swing.JTextArea gCommandInputTextArea;
+    public JTextPane gCommandInputTextArea;
     public javax.swing.JButton gCommandRunButton;
     public javax.swing.JTextArea gSerialOutputTextArea;
     public ButtonGroup gSerialPortGroup;
@@ -52,7 +54,17 @@ public class kondoView extends javax.swing.JFrame {
         this.pCommandHistoryListModel = new DefaultListModel();
         this.commandHistoryList.setModel(pCommandHistoryListModel);
         this.statusLabel.setText("");
-        
+
+        // fix sizes
+        for(Component comp: presetFunctiosPanel.getComponents()){
+            if(comp instanceof JTextField){
+                comp.setMinimumSize(comp.getSize());
+            }
+        }
+
+        commandInputTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
+        LispTextPaneWrapper.setup(commandInputTextArea);
+
         // export components
         this.gMenuBar = this.menuBar;
         this.gCommandInputTextArea = this.commandInputTextArea;
@@ -121,7 +133,7 @@ public class kondoView extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jPanel1 = new javax.swing.JPanel();
+        presetFunctiosPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         pinModePinIdText = new javax.swing.JTextField();
@@ -146,14 +158,27 @@ public class kondoView extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         analogWriteValueText = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        tonePinIdText = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        toneButton = new javax.swing.JButton();
+        jLabel17 = new javax.swing.JLabel();
+        toneFreqText = new javax.swing.JTextField();
+        toneDurationText = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        noTonePinIdText = new javax.swing.JTextField();
+        noToneButton = new javax.swing.JButton();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         commandHistoryList = new javax.swing.JList();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        commandInputTextArea = new javax.swing.JTextArea();
         jLabel14 = new javax.swing.JLabel();
         commandRunButton = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        commandInputTextArea = new javax.swing.JTextPane();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -189,7 +214,8 @@ public class kondoView extends javax.swing.JFrame {
         jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane3.setName("jScrollPane3"); // NOI18N
 
-        jPanel1.setName("jPanel1"); // NOI18N
+        presetFunctiosPanel.setMinimumSize(new java.awt.Dimension(450, 0));
+        presetFunctiosPanel.setName("presetFunctiosPanel"); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
         jLabel3.setText("pinMode");
@@ -217,7 +243,7 @@ public class kondoView extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("TakaoPGothic", 1, 12));
         jLabel5.setText("digitalWrite");
         jLabel5.setName("jLabel5"); // NOI18N
 
@@ -243,7 +269,7 @@ public class kondoView extends javax.swing.JFrame {
             }
         });
 
-        jLabel7.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("TakaoPGothic", 1, 12));
         jLabel7.setText("digitalRead");
         jLabel7.setName("jLabel7"); // NOI18N
 
@@ -279,7 +305,7 @@ public class kondoView extends javax.swing.JFrame {
         jLabel10.setText("pin = ");
         jLabel10.setName("jLabel10"); // NOI18N
 
-        jLabel11.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
+        jLabel11.setFont(new java.awt.Font("TakaoPGothic", 1, 12));
         jLabel11.setText("analogWrite");
         jLabel11.setName("jLabel11"); // NOI18N
 
@@ -300,25 +326,97 @@ public class kondoView extends javax.swing.JFrame {
         jLabel13.setText("value = ");
         jLabel13.setName("jLabel13"); // NOI18N
 
-        analogWriteValueText.setText("1024");
+        analogWriteValueText.setText("1023");
         analogWriteValueText.setName("analogWriteValueText"); // NOI18N
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        jLabel15.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
+        jLabel15.setText("tone");
+        jLabel15.setName("jLabel15"); // NOI18N
+
+        tonePinIdText.setText("13");
+        tonePinIdText.setName("tonePinIdText"); // NOI18N
+
+        jLabel16.setText("freq = ");
+        jLabel16.setName("jLabel16"); // NOI18N
+
+        toneButton.setText("tone");
+        toneButton.setName("toneButton"); // NOI18N
+        toneButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toneButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel17.setText("pin = ");
+        jLabel17.setName("jLabel17"); // NOI18N
+
+        toneFreqText.setText("1000");
+        toneFreqText.setName("toneFreqText"); // NOI18N
+
+        toneDurationText.setMinimumSize(new java.awt.Dimension(42, 23));
+        toneDurationText.setName("toneDurationText"); // NOI18N
+
+        jLabel18.setText("duration = ");
+        jLabel18.setName("jLabel18"); // NOI18N
+
+        jLabel19.setText("pin = ");
+        jLabel19.setName("jLabel19"); // NOI18N
+
+        noTonePinIdText.setText("13");
+        noTonePinIdText.setName("noTonePinIdText"); // NOI18N
+
+        noToneButton.setText("tone");
+        noToneButton.setName("noToneButton"); // NOI18N
+        noToneButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                noToneButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel20.setFont(new java.awt.Font("TakaoPGothic", 1, 12)); // NOI18N
+        jLabel20.setText("noTone");
+        jLabel20.setName("jLabel20"); // NOI18N
+
+        jLabel21.setFont(new java.awt.Font("TakaoPGothic", 1, 14)); // NOI18N
+        jLabel21.setText("<html><u>Basic functions:</u></html>");
+        jLabel21.setName("jLabel21"); // NOI18N
+
+        javax.swing.GroupLayout presetFunctiosPanelLayout = new javax.swing.GroupLayout(presetFunctiosPanel);
+        presetFunctiosPanel.setLayout(presetFunctiosPanelLayout);
+        presetFunctiosPanelLayout.setHorizontalGroup(
+            presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
+                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(333, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, presetFunctiosPanelLayout.createSequentialGroup()
+                .addContainerGap(17, Short.MAX_VALUE)
+                .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(40, 40, 40)
+                        .addComponent(jLabel8)
+                        .addGap(1, 1, 1)
+                        .addComponent(digitalReadPinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(digitalReadButton))
+                    .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
+                        .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel11)
-                            .addComponent(jLabel9))
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel20))
                         .addGap(36, 36, 36)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel19)
+                                .addGap(1, 1, 1)
+                                .addComponent(noTonePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(noToneButton))
+                            .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addGap(1, 1, 1)
                                 .addComponent(digitalWritePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -326,7 +424,7 @@ public class kondoView extends javax.swing.JFrame {
                                 .addComponent(digitalWriteOnButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(digitalWriteOffButton))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addGap(1, 1, 1)
                                 .addComponent(pinModePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -334,7 +432,7 @@ public class kondoView extends javax.swing.JFrame {
                                 .addComponent(pinModeInputButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(pinModeOutputButton))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel12)
                                 .addGap(1, 1, 1)
                                 .addComponent(analogWritePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -344,49 +442,59 @@ public class kondoView extends javax.swing.JFrame {
                                 .addComponent(analogWriteValueText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(analogWriteButton))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addGap(1, 1, 1)
-                                .addComponent(analogReadPinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
+                                .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel10)
+                                        .addGap(1, 1, 1)
+                                        .addComponent(analogReadPinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel17)
+                                        .addGap(1, 1, 1)
+                                        .addComponent(tonePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(analogReadButton))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addGap(40, 40, 40)
-                        .addComponent(jLabel8)
-                        .addGap(1, 1, 1)
-                        .addComponent(digitalReadPinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addComponent(jLabel16)
+                                        .addGap(1, 1, 1)
+                                        .addComponent(toneFreqText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(6, 6, 6)
+                                        .addComponent(jLabel18)
+                                        .addGap(2, 2, 2)
+                                        .addComponent(toneDurationText, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(analogReadButton))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(digitalReadButton)))
-                .addContainerGap(79, Short.MAX_VALUE))
+                        .addComponent(toneButton)))
+                .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        presetFunctiosPanelLayout.setVerticalGroup(
+            presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(pinModePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(pinModeInputButton)
-                            .addComponent(pinModeOutputButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(digitalWritePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(digitalWriteOnButton)
-                            .addComponent(digitalWriteOffButton)
-                            .addComponent(jLabel5))))
+                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(pinModePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pinModeInputButton)
+                    .addComponent(pinModeOutputButton)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(digitalWritePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(digitalWriteOnButton)
+                    .addComponent(digitalWriteOffButton)
+                    .addComponent(jLabel5))
                 .addGap(12, 12, 12)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(digitalReadPinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(digitalReadButton)
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
                     .addComponent(analogWritePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13)
@@ -394,18 +502,35 @@ public class kondoView extends javax.swing.JFrame {
                     .addComponent(analogWriteButton)
                     .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(analogReadPinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(analogReadButton)
                     .addComponent(jLabel9))
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel17)
+                    .addComponent(tonePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16)
+                    .addComponent(toneFreqText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15)
+                    .addComponent(jLabel18)
+                    .addComponent(toneDurationText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(toneButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(jLabel19)
+                    .addComponent(noTonePinIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(noToneButton))
+                .addContainerGap(101, Short.MAX_VALUE))
         );
 
-        jScrollPane3.setViewportView(jPanel1);
+        jScrollPane3.setViewportView(presetFunctiosPanel);
 
         jTabbedPane1.addTab("Preset functions", jScrollPane3);
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jPanel2.setName("jPanel2"); // NOI18N
 
         jLabel1.setText("History:");
@@ -426,18 +551,6 @@ public class kondoView extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(commandHistoryList);
 
-        jScrollPane4.setName("jScrollPane4"); // NOI18N
-
-        commandInputTextArea.setColumns(20);
-        commandInputTextArea.setRows(5);
-        commandInputTextArea.setName("commandInputTextArea"); // NOI18N
-        commandInputTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                commandInputTextAreaKeyPressed(evt);
-            }
-        });
-        jScrollPane4.setViewportView(commandInputTextArea);
-
         jLabel14.setText("Command:");
         jLabel14.setName("jLabel14"); // NOI18N
 
@@ -448,6 +561,12 @@ public class kondoView extends javax.swing.JFrame {
                 commandRunButtonActionPerformed(evt);
             }
         });
+
+        jScrollPane4.setName("jScrollPane4"); // NOI18N
+
+        commandInputTextArea.setBackground(javax.swing.UIManager.getDefaults().getColor("TextPane.background"));
+        commandInputTextArea.setName("commandInputTextArea"); // NOI18N
+        jScrollPane4.setViewportView(commandInputTextArea);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -462,9 +581,9 @@ public class kondoView extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel14)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 159, Short.MAX_VALUE)
                                 .addComponent(commandRunButton))
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE))))
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -472,13 +591,13 @@ public class kondoView extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(commandRunButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Command", jPanel2);
@@ -504,15 +623,15 @@ public class kondoView extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jLabel2)
-                .addContainerGap(362, Short.MAX_VALUE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                .addContainerGap(412, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 490, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel4);
@@ -530,7 +649,7 @@ public class kondoView extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -579,7 +698,7 @@ public class kondoView extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 490, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -641,48 +760,6 @@ public class kondoView extends javax.swing.JFrame {
         CommandHistoryItem item = (CommandHistoryItem)pCommandHistoryListModel.getElementAt(selected_idx);
         this.commandInputTextArea.setText(item.getCommand());
     }//GEN-LAST:event_commandHistoryListValueChanged
-
-    private void commandInputTextAreaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_commandInputTextAreaKeyPressed
-        int list_idx = this.commandHistoryList.getSelectedIndex();
-
-        switch (evt.getModifiers()) {
-            case KeyEvent.META_DOWN_MASK:
-            case KeyEvent.META_MASK:
-            case KeyEvent.ALT_DOWN_MASK:
-            case KeyEvent.ALT_MASK:
-                switch (evt.getKeyCode()){
-                    case KeyEvent.VK_P:
-                        if (this.pCommandHistoryListModel.getSize() > 0){
-                            if (list_idx > 0) {
-                                list_idx--;
-                            }
-                            this.commandHistoryList.setSelectedIndex(list_idx);
-                        }
-                        break;
-                    case KeyEvent.VK_N:
-                        if (this.pCommandHistoryListModel.getSize() > 0){
-                            if (list_idx < this.pCommandHistoryListModel.getSize() - 1){
-                                list_idx++;
-                            }
-                            this.commandHistoryList.setSelectedIndex(list_idx);
-                        }
-                        break;
-                }
-                break;
-            case KeyEvent.CTRL_DOWN_MASK:
-            case KeyEvent.CTRL_MASK:
-                switch(evt.getKeyCode()){
-                    case KeyEvent.VK_ENTER:
-                        runCommand(this.commandInputTextArea.getText());
-                        break;
-                }
-                break;
-            default:
-                break;
-        }
-        KeyEvent ev;
-        evt.getKeyCode();
-    }//GEN-LAST:event_commandInputTextAreaKeyPressed
 
     private int readNum(JTextField textfield){
         int ret;
@@ -752,6 +829,28 @@ public class kondoView extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_analogReadButtonActionPerformed
 
+    private void toneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toneButtonActionPerformed
+        int pin = readNum(tonePinIdText);
+        int freq = readNum(toneFreqText);
+        int duration;
+        if (pin == -1) return;
+        if (freq == -1) return;
+        if (toneDurationText.getText().length() > 0){
+            duration = readNum(toneDurationText);
+            if (duration == -1) return;
+            runCommand("(tone "+pin+" "+freq+" "+duration+")");
+        } else {
+            runCommand("(tone "+pin+" "+freq+")");
+        }
+    }//GEN-LAST:event_toneButtonActionPerformed
+
+    private void noToneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noToneButtonActionPerformed
+        int pin = readNum(noTonePinIdText);
+        if (pin != -1){
+            runCommand("(no-tone "+pin+")");
+        }
+    }//GEN-LAST:event_noToneButtonActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -770,7 +869,7 @@ public class kondoView extends javax.swing.JFrame {
     private javax.swing.JTextField analogWritePinIdText;
     private javax.swing.JTextField analogWriteValueText;
     private javax.swing.JList commandHistoryList;
-    private javax.swing.JTextArea commandInputTextArea;
+    private javax.swing.JTextPane commandInputTextArea;
     private javax.swing.JButton commandRunButton;
     private javax.swing.JButton digitalReadButton;
     private javax.swing.JTextField digitalReadPinIdText;
@@ -786,7 +885,14 @@ public class kondoView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -798,7 +904,6 @@ public class kondoView extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -809,12 +914,19 @@ public class kondoView extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JButton noToneButton;
+    private javax.swing.JTextField noTonePinIdText;
     private javax.swing.JButton pinModeInputButton;
     private javax.swing.JButton pinModeOutputButton;
     private javax.swing.JTextField pinModePinIdText;
+    private javax.swing.JPanel presetFunctiosPanel;
     private javax.swing.JTextArea serialOutputTextArea;
     private javax.swing.JMenu serialPortMenu;
     private javax.swing.JLabel statusLabel;
+    private javax.swing.JButton toneButton;
+    private javax.swing.JTextField toneDurationText;
+    private javax.swing.JTextField toneFreqText;
+    private javax.swing.JTextField tonePinIdText;
     // End of variables declaration//GEN-END:variables
 
 }
