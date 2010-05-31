@@ -2,10 +2,13 @@
 #include <avr/pgmspace.h>
 #include <EEPROM.h>
 
+// #define DEBUG
+
 extern "C"
 {
 #include "kondo_lisp.h"
 
+#ifdef DEBUG
 #define assert(cond)                                    \
     {                                                   \
         if (!(cond)){                                   \
@@ -16,6 +19,9 @@ extern "C"
             HALT("");                                   \
         }                                               \
     }
+#else
+#define assert(x)	
+#endif
 
 #define CELLBLOCK_ELEM_NUM  16
 #define CELLBLOCK_SIZE  (CELLBLOCK_ELEM_NUM * sizeof(cell_t))
@@ -48,7 +54,7 @@ extern "C"
         Vnil.data = 0;
         Vt.data = (1<<13 | 1);
         
-        Serial.println("*** Welcome to KondoLisp ***");
+        Serial.println("** Welcome to KondoLisp **");
         Serial.print(0, BYTE);
     }
 
@@ -78,18 +84,6 @@ extern "C"
             while(c1 | c2 | c3 | c4){
                 for(i = 0;i < 4;i++){
                     EEPROM.write(addr++, c1);
-                    if (debug_mode){
-                        Serial.print(addr, DEC);
-                        Serial.print(':', BYTE);
-                        Serial.print(c1, DEC);
-                        Serial.print(',', BYTE);
-                        Serial.print(c2, DEC);
-                        Serial.print(',', BYTE);
-                        Serial.print(c3, DEC);
-                        Serial.print(',', BYTE);
-                        Serial.print(c4, DEC);
-                        Serial.println("");
-                    }
                     READ_NEXT();
                 }
             }
@@ -333,6 +327,7 @@ extern "C"
         vm.sp = vm.stack;
 
     dispatch:
+#ifdef DEBUG
         if (debug_mode) {
             Serial.print("PC: ");
             Serial.print((word)vm.pc / sizeof(vminst_t), DEC);
@@ -348,6 +343,7 @@ extern "C"
             Serial.print((word)vm.fp, DEC);
             Serial.println("");
         }
+#endif
         switch(vm_opecode()){
         case VM_IVAL:
             vm_ival();
