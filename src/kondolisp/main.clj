@@ -25,7 +25,14 @@
    (.getMessage exception)
    #"(\w+\.)+(\w+)?Exception:[ \t]*" ""))
 
-(defn kondo-repl []
+(defn kondo-repl [& rest]
+  (if (> (count rest) 0)
+    (set-serial-config {:port-name (first rest)})
+    (let [serial-ports (get-serial-ports)]
+      (if (> (count serial-ports) 0)
+	(set-serial-config {:port-name (first serial-ports)})
+	(do (sys-println "No serial port is available")
+	    (System/exit 1)))))
   (open-serial)
   (let [output-queue (LinkedBlockingQueue. ),
 	serial-output-thread
@@ -245,18 +252,22 @@
   )
 
 (defn -main [& argv]
-  (match argv
-    ("header" "vminst" & rest)
-    (kondolisp.compiler/generate-vminst-header)
-    ;;
-    ("header" "builtin" & rest)
-    (kondolisp.compiler/generate-builtin-header)
-    ;;
-    ("repl" & rest)
-    (kondo-repl)
-    ;;
-    _	(do (sys-println (str argv))
-	    (kondo-gui)))
+  (with-command-line argv
+    "KondoLisp: A dynamic prototyping framework for Arduino"
+    [[serial-port s "Serial port to use" nil]
+     argv]
+    (match argv
+      ("header" "vminst" & rest)
+      (kondolisp.compiler/generate-vminst-header)
+      ;;
+      ("header" "builtin" & rest)
+      (kondolisp.compiler/generate-builtin-header)
+      ;;
+      ("repl" & rest)
+      (kondo-repl serial-port)
+      ;;
+      _	(do (sys-println (str argv))
+	    (kondo-gui))))
   true)
 
 
