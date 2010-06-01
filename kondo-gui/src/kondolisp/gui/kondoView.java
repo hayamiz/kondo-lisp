@@ -20,6 +20,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
+import javax.swing.JMenu;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
@@ -35,7 +36,9 @@ public class kondoView extends javax.swing.JFrame {
     public javax.swing.JTextArea gSerialOutputTextArea;
     public ButtonGroup gSerialPortGroup;
     public javax.swing.JLabel gStatusLabel;
+    public JMenu gSerialPortMenu;
     private javax.swing.DefaultListModel pCommandHistoryListModel;
+
 
     /** Creates new form kondoView */
     public kondoView() {
@@ -70,6 +73,7 @@ public class kondoView extends javax.swing.JFrame {
         this.gSerialOutputTextArea = this.serialOutputTextArea;
         this.gSerialPortGroup = null;
         this.gStatusLabel = this.statusLabel;
+        this.gSerialPortMenu = this.serialPortMenu;
     }
 
     public void setSerialPortMenu(String[] portNames) {
@@ -319,7 +323,7 @@ public class kondoView extends javax.swing.JFrame {
             }
         });
 
-        jLabel21.setFont(new java.awt.Font("TakaoPGothic", 1, 14)); // NOI18N
+        jLabel21.setFont(new java.awt.Font("TakaoPGothic", 1, 14));
         jLabel21.setText("<html><u>Basic functions:</u></html>");
         jLabel21.setName("jLabel21"); // NOI18N
 
@@ -357,7 +361,7 @@ public class kondoView extends javax.swing.JFrame {
         digitalWriteOffButton.setText("off");
         digitalWriteOffButton.setName("digitalWriteOffButton"); // NOI18N
 
-        jLabel22.setFont(new java.awt.Font("TakaoPGothic", 1, 14)); // NOI18N
+        jLabel22.setFont(new java.awt.Font("TakaoPGothic", 1, 14));
         jLabel22.setText("<html><u>Examples:</u></html>");
         jLabel22.setName("jLabel22"); // NOI18N
 
@@ -387,9 +391,7 @@ public class kondoView extends javax.swing.JFrame {
                 .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
                         .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(345, 345, 345))
+                            .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
                                 .addGroup(presetFunctiosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(noToneButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -461,10 +463,9 @@ public class kondoView extends javax.swing.JFrame {
                                                 .addComponent(toneDurationText, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                                             .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
                                                 .addGap(28, 28, 28)
-                                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                             .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(67, Short.MAX_VALUE))
                     .addGroup(presetFunctiosPanelLayout.createSequentialGroup()
                         .addComponent(example1Button, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                         .addGap(377, 377, 377))))

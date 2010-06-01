@@ -5,18 +5,23 @@
         [clojure.contrib str-utils java-utils pprint seq-utils])
   (:import (gnu.io CommPort
                    CommPortIdentifier
-                   SerialPort)
+                   SerialPort
+                   SerialPortEvent
+                   SerialPortEventListener)
            (java.io FileDescriptor
                     IOException
                     InputStream
                     OutputStream)
            (java.nio ByteBuffer)
-           (java.nio.channels Selector Channels)))
+           (java.nio.channels Selector Channels)
+           (kondolisp.util RingByteBuffer
+                           RingByteBuffer$UnderflowException)))
 
 (def *serial* (ref nil))
 (def *serial-config* (ref {:port-name nil,
                            :baud-rate 9600,
                            :app-name "kondolisp"}))
+(def *serial-buffer* (RingByteBuffer.))
 
 (defn set-serial-config [config]
   (dosync
@@ -35,7 +40,22 @@
                             SerialPort/DATABITS_8,
                             SerialPort/STOPBITS_1,
                             SerialPort/PARITY_NONE)
-      (.enableReceiveTimeout comm-port 1000)
+      (.clear *serial-buffer*)
+      (.addEventListener
+       comm-port
+       (proxy [SerialPortEventListener] []
+         (serialEvent
+          [evt]
+          (condp = (.getEventType evt)
+            SerialPortEvent/DATA_AVAILABLE
+            (let [in (.getInputStream comm-port),
+                  buf (make-array (. Byte TYPE) 1024),
+                  len (.read in buf)]
+              (dotimes [idx len]
+                (.put *serial-buffer* (byte (aget buf idx)))))
+            ;;
+            (.getEventType evt)	nil))))
+      (.notifyOnDataAvailable comm-port true)
       (dosync (ref-set *serial* comm-port)))))
 
 (defn serial-opened? []
@@ -55,14 +75,21 @@
       (.close serial)
       (dosync (ref-set *serial* nil)))))
 
-(defn read-serial [nbytes]
+(defn read-serial []
   (let [serial @*serial*]
     (when serial
-      (let [in (.getInputStream serial),
-            buf (make-array (. Byte TYPE) nbytes),
-            len (.read in buf)]
-        (if (> len 0)
-          (String. buf, 0, len)
+      (let [data (take-while #(and (not (nil? %)) (not (= (byte 0) %)))
+                             (repeatedly
+                              (fn []
+                                (try
+                                 (.get *serial-buffer*)
+                                 (catch RingByteBuffer$UnderflowException e
+                                   nil)))))]
+        (if (> (count data) 0)
+          (let [buf (make-array (. Byte TYPE) (count data))]
+            (doseq [[idx b] (indexed data)]
+              (aset buf idx b))
+            (String. buf))
           nil)))))
 
 (defn get-serial-ports []
@@ -73,8 +100,12 @@
         serial-ports (filter (fn [port-ident]
                                (= (.getPortType port-ident)
                                   CommPortIdentifier/PORT_SERIAL))
-                             ports)]
-    (map #(.getName %) ports)))
+                             ports)
+        port-names (map #(.getName %) ports)]
+    (if (serial-opened?)
+      (cons (opened-port-name) port-names)
+      port-names)
+    ))
 
 (defn to-byte-array [coll]
   (let [bytes (map byte coll)

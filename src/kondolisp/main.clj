@@ -11,7 +11,9 @@
 	   (java.util.concurrent LinkedBlockingQueue
 				 TimeUnit CyclicBarrier)
 	   (java.nio.channels Selector)
-	   (javax.swing UIManager JOptionPane)))
+	   (javax.swing UIManager JOptionPane JRadioButtonMenuItem
+			ButtonGroup JSeparator JMenuItem)
+	   (javax.swing.event MenuListener)))
 
 (defn- sys-println [arg]
   (.println System/out arg))
@@ -83,28 +85,71 @@
 (defn set-status [view str]
   (.setText (.. view gStatusLabel) str))
 
+(defn setup-serial-menu [view]
+  (let [item-listener
+	(proxy [ItemListener] []
+	  (itemStateChanged
+	   [evt]
+	   (when (= ItemEvent/SELECTED (.getStateChange evt))
+	     (let [selected-port (.. evt getItemSelectable getText)]
+	       (when (not (and (serial-opened?)
+			       (= selected-port
+				  (opened-port-name))))
+		 (close-serial)
+		 (set-serial-config
+		  {:port-name selected-port})
+		 (open-serial)
+		 (set-status view
+			     (str "Serial port " selected-port " opened"))
+		 )))))]
+    (letfn [(make-serial-port-menu
+	     []
+	     (.. view gSerialPortMenu removeAll)
+	     (let [group (ButtonGroup.),
+		   menu-items (map (fn [port-name]
+				     (let [item (JRadioButtonMenuItem. port-name)]
+				       (.addItemListener item item-listener)
+				       item))
+				   (get-serial-ports))]
+	       (if (> (count menu-items) 0)
+		 (do
+		   (doseq [menu-item menu-items]
+		     (.add group menu-item)
+		     (.add (.. view gSerialPortMenu) menu-item))
+		   (when (serial-opened?)
+		     (let [selected-port (opened-port-name),
+			   selected-item (some #(and (= selected-port (.getText %)) %)
+					       menu-items)]
+		       (if (not (nil? selected-item))
+			 (.setSelected group, (.getModel selected-item), true))))
+		   (let [sep (JSeparator.),
+			 close-serial-item (JMenuItem. "Close serial port")]
+		     (.addActionListener
+		      close-serial-item
+		      (proxy [ActionListener] []
+			(actionPerformed
+			 [evt]
+			 (close-serial)
+			 (set-serial-config {:port-name nil})
+			 (.clearSelection group)
+			 (set-status view (str "Closed " (serial-config :port-name))))))
+		     (.add (.. view gSerialPortMenu) sep)
+		     (.add (.. view gSerialPortMenu) close-serial-item)
+		     ))
+		 (.add (.. view gSerialPortMenu)
+		       (JMenuItem. "No serial port available")))
+		 ))]
+      (let [menu-listener
+	    (proxy [MenuListener] []
+	      (menuSelected
+	       [evt]
+	       (make-serial-port-menu))
+	      (menuDeselected [_] nil)
+	      (menuCanceled [_] nil))]
+	(.addMenuListener (.. view gSerialPortMenu) menu-listener)))))
+
 (defn kondo-setup-view [view]
-  (let [serial-ports (get-serial-ports)]
-    (if (> (count serial-ports) 0)
-      (.setSerialPortMenu
-       view
-       (into-array (get-serial-ports))
-       0
-       (proxy [ItemListener] []
-	 (itemStateChanged
-	  [evt]
-	  (when (= ItemEvent/SELECTED (.getStateChange evt))
-	    (let [selected-port (.. evt getItemSelectable getText)]
-	      (sys-println (str selected-port))
-	      (when (not (and (serial-opened?)
-			      (= selected-port
-				 (opened-port-name))))
-		(close-serial)
-		(set-serial-config
-		 {:port-name selected-port})
-		(open-serial)
-		(set-status view
-			    (str "Serial port " selected-port " opened"))))))))))
+  (setup-serial-menu view)
   (.addActionListener
    (.gCommandRunButton view)
    (proxy [ActionListener] []
@@ -152,10 +197,14 @@
 	 (fn []
 	   (while (not (.isInterrupted (Thread/currentThread)))
 		  (if (serial-opened?)
-		    (let [serial-output (read-serial 1024),
+		    (let [serial-output (read-serial),
 			  text-area (.. view gSerialOutputTextArea)]
-		      (.append text-area serial-output)
-		      (.setCaretPosition text-area (.. text-area getDocument getLength)))
+		      (if (nil? serial-output)
+			(Thread/sleep 1000)
+			(do
+			  (.append text-area serial-output)
+			  (.setCaretPosition text-area
+					     (.. text-area getDocument getLength)))))
 		    (Thread/sleep 1000)))))]
     (.start serial-printer)
     (.addWindowListener
