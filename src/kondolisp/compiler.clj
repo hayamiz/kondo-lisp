@@ -2,7 +2,6 @@
 
 (ns kondolisp.compiler
   (:use [clojure core]
-        [clojure.contrib str-utils pprint seq-utils]
 	[clj-match])
   (:require [clojure.walk]
 	    [clojure.contrib str-utils2])

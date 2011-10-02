@@ -1,8 +1,8 @@
 ;; -*- indent-tabs-mode: nil; mode: clojure  -*-
 
 (ns kondolisp.serial
-  (:use [clojure core]
-        [clojure.contrib str-utils java-utils pprint seq-utils])
+  (:use [clojure core])
+  (:require [clojure.contrib seq-utils])
   (:import (gnu.io CommPort
                    CommPortIdentifier
                    SerialPort
@@ -87,7 +87,7 @@
                                    nil)))))]
         (if (> (count data) 0)
           (let [buf (make-array (. Byte TYPE) (count data))]
-            (doseq [[idx b] (indexed data)]
+            (doseq [[idx b] (clojure.contrib.seq-utils/indexed data)]
               (aset buf idx b))
             (String. buf))
           nil)))))
