@@ -14,10 +14,17 @@ FIXME: write
 
 ## For Developers
 
+Download and install [Leiningen](https://github.com/technomancy/leiningen).
+
+### Running KondoLisp from *.clj files
+
+  * Run `run.sh`
+    * Currently, run.sh supports only Linux
+
 ### Building KondoLisp
 
-1. Download and install [Leiningen](https://github.com/technomancy/leiningen)
-2. run `make`
+  * Running `make` generates stand alone jar file (not including JNI libraries)
+  * Running `make dist` generates jar files for distribution (including JNI libraries)
 
 ## License
 
