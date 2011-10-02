@@ -109,10 +109,16 @@
                                  (second inst-spec)
                                  idx))))
 
+(defn #^{:doc "Convert unsigned byte to byte"}
+  ubyte-to-sbyte [x]
+  (if (> x 127)
+    (- x 0x100)
+    x))
+
 (defn #^{:doc "Convert Short to 2 Bytes (big endian)"}
   short-to-byte [#^Short short]
-  [(byte (bit-and short 0xFF))
-   (byte (bit-and (bit-shift-right short 8) 0xFF))])
+  [(byte (ubyte-to-sbyte (bit-and short 0xFF)))
+   (byte (ubyte-to-sbyte (bit-and (bit-shift-right short 8) 0xFF)))])
 
 (defn index [pred coll]
   (defn inner-index [idx pred coll]
@@ -501,7 +507,9 @@
     ((:VM_VREF x) (:VM_PUSH) & rest)
     `((:VM_VREF_PUSH ~x) ~@(compile-compact rest))
     ;;
-    (x & xs)	`(~x ~@(compile-compact xs))
+    (x) `(~x)
+    ;;
+    (x & xs) `(~x ~@(compile-compact xs))
     ;;
     ()	program
   ))
