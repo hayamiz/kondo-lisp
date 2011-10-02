@@ -41,7 +41,7 @@
 	   (try
 	    (while (not (.isInterrupted (Thread/currentThread)))
 		   (let [serial-output
-			 (read-serial 1024)]
+			 (read-serial)]
 		     (if (not (nil? serial-output))
 		       (.put output-queue serial-output))))
 	    (catch InterruptedException e
