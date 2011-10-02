@@ -48,11 +48,28 @@
   (is (= [[:VM_IVAL (make-num 1)]]
          (compile-pass1 1)))
 
+  (is (= [[:VM_IVAL (make-num 1)]]
+         (compile-pass1 '(quote 1))))
+
   (is (= [[:VM_IVAL (make-sym "aa")]]
          (compile-pass1 ''aa)))
 
   (is (= [[:VM_IVAL (make-t)]]
          (compile-pass1 't)))
 
+  (is (= [[:VM_IVAL (make-t)]]
+         (compile-pass1 ''t)))
+
   (is (= [[:VM_IVAL (make-nil)]]
          (compile-pass1 'nil))))
+
+(deftest test-compile-pass1-quote
+  (is (= [[:VM_IVAL (make-num 1)]
+          [:VM_PUSH]
+          [:VM_IVAL (make-num 2)]
+          [:VM_PUSH]
+          [:VM_IVAL (make-nil)]
+          [:VM_CONS]
+          [:VM_CONS]]
+         (compile-pass1 '(quote (1 2)))))
+  )
