@@ -70,6 +70,19 @@ lispval_t builtin_fun(word fname, word nargs,
 void write(lispval_t);
 void writeln(lispval_t);
 
+/*
+  NIL: 0b0000000000000000
+  T  : 0b0010000000000001
+
+  SYMBOL:
+     : 0b01xxxxxxxxxxxxx1
+            ******       ... bits for first char
+                  ****** ... bits for second char
+  NUMBER:
+     : 0b1xxxxxxxxxxxxxx1
+          *               ... sign
+           *************  ... number
+ */
 
 #define C2EC(c)		((c) - '!') // char to encoded char
 #define EC2C(c)		((c) + '!') // encoded char to char
