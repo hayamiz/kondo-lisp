@@ -1,5 +1,7 @@
 # KondoLisp
 
+[![Build Status](https://secure.travis-ci.org/hayamiz/kondo-lisp.png)](http://travis-ci.org/hayamiz/kondo-lisp)
+
 KondoLisp is a framework for dynamic prototyping on Arduino. It
 enables you to run programs on Arduino WITHOUT frastrating compiling
 and uploading processes.
