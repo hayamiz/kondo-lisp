@@ -87,4 +87,5 @@ clean:
 	(cd kondo-gui; ant clean)
 
 check:
+	lein deps
 	lein test
