@@ -41,6 +41,14 @@
   (is (= 0x4001
          (make-sym "!!")))
 
+  (is (= (bit-or
+          0x4001
+          (bit-or
+           (bit-shift-left (- (int \A) (int \!)) 7)
+           (bit-shift-left 63 1)))
+         (make-sym "a")))
+
+  ;; reject symbol longer than 2 chars
   (is (thrown? RuntimeException
                (make-sym "hoge"))))
 

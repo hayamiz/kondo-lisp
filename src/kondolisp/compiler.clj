@@ -186,10 +186,12 @@
 (defn make-sym [sym]
   (cond
    (and (string? sym)
-	(= 2 (count sym)))
+	(>= 2 (count sym)))
    (let [sym (clojure.contrib.str-utils2/upper-case sym)]
      (combine-chars (nth sym 0)
-		    (nth sym 1)))
+                    (if (= 1 (count sym))
+                      (char (+ 63 (int \!)))
+                      (nth sym 1))))
    ;;
    (symbol? sym)	(recur (.toString sym))
    true
