@@ -12,6 +12,13 @@ FIXME: write
 
 FIXME: write
 
+## For Developers
+
+### Building KondoLisp
+
+1. Download and install [Leiningen](https://github.com/technomancy/leiningen)
+2. run `make`
+
 ## License
 
 MIT License. See /LICENSE.txt
