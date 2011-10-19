@@ -1,7 +1,7 @@
 (ns kondolisp.main
   (:gen-class)
-  (:use [clojure core]
-	[clojure.contrib pprint command-line java-utils]
+  (:use [clojure core pprint]
+	[clojure.contrib command-line java-utils]
 	[clj-match]
 	[kondolisp  serial])
   (:require [kondolisp compiler]
@@ -39,55 +39,57 @@
 	(Thread.
 	 (fn []
 	   (try
-	    (while (not (.isInterrupted (Thread/currentThread)))
-		   (let [serial-output
-			 (read-serial)]
-		     (if (not (nil? serial-output))
-		       (.put output-queue serial-output))))
-	    (catch InterruptedException e
-	      nil)
-	    )))]
+             (while (not (.isInterrupted (Thread/currentThread)))
+               (let [serial-output
+                     (read-serial)]
+                 (if (not (nil? serial-output))
+                   (.put output-queue serial-output))))
+             (catch InterruptedException e
+               nil)
+             )))]
     (.start serial-output-thread)
     (try
-     (letfn [(printer
-	      [] (let [output (.take output-queue),
-		       last-char (.charAt output,
-					  (- (.length output) 1))]
-		   (.print System/out output)
-		   (if (= last-char (char 0))
-		     nil
-		     (do (recur))
-		     )))]
-       (while true
-	      (while (> (.size output-queue) 0)
-		     (printer)
-		     (Thread/sleep 50))
-	      ;;	    (while (> (.size output-queue) 0)
-	      ;;		   (.print System/out (.take output-queue))
-	      ;;		   (Thread/sleep 50)
-	      ;;		   )
-	      (.flush System/out)
-	      (let [user-input (do (.print System/out "kondo-lisp> ")
-				   (read))]
-		(match user-input
-		  :quit		(throw (RuntimeException. "quit"))
-		  :help		(throw (RuntimeException. "quit"))
-		  _
-		  (let [byteseq (kondolisp.compiler/kondo-compile user-input)]
-		    (write-serial
-		     (concat byteseq [0 0 0 0]))
-		    (printer)
-		    (Thread/sleep 50))))))
-     (catch clojure.lang.LispReader$ReaderException e
-       (sys-println ":quit"))
-     (catch RuntimeException e
-       (match (.getMessage e)
-	 "java.lang.RuntimeException: quit"	nil
-	 _		(throw e)))
-     (finally
-      (.interrupt serial-output-thread)
-      (close-serial)
-      ))))
+      (letfn [(printer
+                [] (let [output (.take output-queue),
+                         last-char (.charAt output,
+                                            (- (.length output) 1))]
+                     (.print System/out output)
+                     (.flush System/out)
+                     (if (or (= last-char (char 0))
+                             (= last-char \newline))
+                       nil
+                       (do (recur))
+                       )))]
+        (while true
+          (Thread/sleep 50)
+          (while (> (.size output-queue) 0)
+            (printer)
+            (Thread/sleep 50))
+          (.flush System/out)
+          (let [user-input (do (.print System/out "kondo-lisp> ")
+                               (read))]
+            (match user-input
+              :quit		(throw (RuntimeException. "quit"))
+              :help		(do
+                                  (sys-println "==== KondoLisp REPL commands ====")
+                                  (sys-println " :help ... show this help")
+                                  (sys-println " :quit ... quit KondoLisp"))
+              _
+              (let [byteseq (kondolisp.compiler/kondo-compile user-input)]
+                (write-serial
+                 (concat byteseq [0 0 0 0]))
+                (Thread/sleep 500)
+                )))))
+      (catch clojure.lang.LispReader$ReaderException e
+        (sys-println ":quit"))
+      (catch RuntimeException e
+        (match (.getMessage e)
+          "java.lang.RuntimeException: quit"	nil
+          _		(throw e)))
+      (finally
+       (.interrupt serial-output-thread)
+       (close-serial)
+       ))))
 
 (defn set-status [view str]
   (.setText (.. view gStatusLabel) str))
@@ -255,20 +257,28 @@
   (with-command-line argv
     "KondoLisp: A dynamic prototyping framework for Arduino"
     [[serial-port s "Serial port to use" nil]
+     [show-help h "Show this help" nil]
      argv]
-    (match argv
-      ("header" "vminst" & rest)
-      (kondolisp.compiler/generate-vminst-header)
-      ;;
-      ("header" "builtin" & rest)
-      (kondolisp.compiler/generate-builtin-header)
-      ;;
-      ("repl" & rest)
-      (kondo-repl serial-port)
-      ;;
-      _	(do (sys-println (str argv))
-	    (kondo-gui))))
-  true)
-
+    (if (not (nil? show-help))
+      (do
+        (sys-println "Usage:")
+        (sys-println "  kondo-lisp ... invoke KondoLisp GUI")
+        (sys-println "  kondo-lisp -s TTY repl ... invoke command line repl. Specify Arduino serial device as TTY (ex. /dev/ttyUSB0)")
+        true)
+      (do
+        (match argv
+          ("header" "vminst" & rest)
+          (kondolisp.compiler/generate-vminst-header)
+          ;;
+          ("header" "builtin" & rest)
+          (kondolisp.compiler/generate-builtin-header)
+          ;;
+          ("repl" & rest)
+          (kondo-repl serial-port)
+          ;;
+          _	(do (sys-println (str argv))
+                    (kondo-gui)))
+        true)
+    )))
 
 

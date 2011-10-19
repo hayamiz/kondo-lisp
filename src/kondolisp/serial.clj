@@ -1,7 +1,7 @@
 ;; -*- indent-tabs-mode: nil; mode: clojure  -*-
 
 (ns kondolisp.serial
-  (:use [clojure core])
+  (:use [clojure core pprint])
   (:require [clojure.contrib seq-utils])
   (:import (gnu.io CommPort
                    CommPortIdentifier
@@ -75,16 +75,19 @@
       (.close serial)
       (dosync (ref-set *serial* nil)))))
 
+;; returns String read from Serial port
 (defn read-serial []
   (let [serial @*serial*]
     (when serial
-      (let [data (take-while #(and (not (nil? %)) (not (= (byte 0) %)))
-                             (repeatedly
-                              (fn []
-                                (try
-                                 (.get *serial-buffer*)
-                                 (catch RingByteBuffer$UnderflowException e
-                                   nil)))))]
+      (let [data (take-while
+                  #(and (not (nil? %))
+                        (not (= (byte 0) %)))
+                  (repeatedly
+                   (fn []
+                     (try
+                       (.get *serial-buffer*)
+                       (catch RingByteBuffer$UnderflowException e
+                         nil)))))]
         (if (> (count data) 0)
           (let [buf (make-array (. Byte TYPE) (count data))]
             (doseq [[idx b] (clojure.contrib.seq-utils/indexed data)]

@@ -8,9 +8,12 @@ LD_LIBRARY_PATH := $(shell find `pwd`/rxtx -type d|while read dir; do echo -n "$
 
 TARGET = $(STANDALONE_JAR) $(VMINST_H) $(BUILTIN_H)
 
-.PHONY: all clean check jar deps dist lein-deps
+.PHONY: all clean check jar deps dist lein-deps compile
 
-all: $(TARGET)
+all: compile
+
+compile: deps
+	lein compile
 
 lein-deps:
 	echo ${LD_LIBRARY_PATH}
